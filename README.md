@@ -13,19 +13,13 @@ You will need to install several pieces of software on your computer to carry ou
 
     (Choose R Studio Desktop - Open Source License)
 
-3) Fastqc 
+Errata:
 
-    Download at: https://www.bioinformatics.babraham.ac.uk/projects/fastqc/
+*If Lab2 doesn't knit in R studio but all chunks work OK when run individually:
+	**knit(Lab2.RMD)
+	**render(Lab2.Rm)
 
-4) Qiime
+	To produce pdf	
 
-	If you are running MacOs, MacQiime is the easiest way to install Qiime. Follow the instructions here to download and install:
-
-	http://www.wernerlab.org/software/macqiime
-
-	Qiime Virtual Box is available for Windows, MacOs, and Linux. Follow the installation instructions here:
-	http://qiime.org/install/virtual_box.html
-
-	
 
 

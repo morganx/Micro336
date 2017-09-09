@@ -1,0 +1,27 @@
+---
+title: "My First Micro336 Assignment"
+author: "XCM"
+date: "7/6/2017"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+This is an extremely simple R Markdown example. You can use the white space to write comments and your answers to any questions that are in the lab manual. 
+
+R will execute commands that are between three backticks followed by {r}, like the code block underneath this sentence.
+
+```{r}
+#R will not execute this comment because it starts with #, but it will execute the code underneath
+print ("Welcome to Micro336!")
+```
+
+The preceding three backticks indicate the end of the block of code, so I can put more comments here.
+
+```{r}
+# This is my second chunk of R code
+print("I can't wait to learn to use R!")
+a<-1
+b<-2
+print(a + b)
+```
