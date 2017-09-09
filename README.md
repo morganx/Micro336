@@ -21,5 +21,6 @@ Errata:
 
 	To produce pdf	
 
+*This is also how Lab3 should knit. This requires the libraries "knitr" and "rmarkdown" to be loaded
 
 
