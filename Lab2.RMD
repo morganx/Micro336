@@ -43,7 +43,7 @@ setwd("~/micro336/")
 ```{r}
 # First, change our path to the directory containing the fastq files after unzipping so R can find these files
 
-path <- "~/micro336/data" 
+path <- "data" 
 qa<-rqc(path=path, pattern=".fq.gz")
 ```
 
@@ -149,7 +149,7 @@ rownames(track) <- sample.names
 head(track)
 ```
 ```{r}
-silva<-("~/micro336/data/databases/silva_v128/silva_nr_v128_train_set.fa.gz")
+silva<-("data/databases/silva_v128/silva_nr_v128_train_set.fa.gz")
 taxa <- assignTaxonomy(seqtab.nochim, silva, multithread=TRUE)
 unname(head(taxa))
 ```
@@ -173,5 +173,7 @@ ps
  plot_bar(ps.tx, x="Subject", fill="Phylum") 
  
  proc.time() - ptm
+  object.size(x=lapply(ls(), get))  
+ print(object.size(x=lapply(ls(), get)), units="Mb")
  
 ```
