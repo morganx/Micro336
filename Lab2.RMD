@@ -67,7 +67,7 @@ plotQualityProfile(fnRs)
 
 #folder <- system.file(package="ShortRead", "path")
 #rqc(path = folder, pattern = ".fq.gz")
-rqcReadWidthPlot(qa)
+#rqcReadWidthPlot(qa)
 
 pairs <- unique(perFileInformation(qa)$pair)
 for(pair in pairs) 
@@ -149,7 +149,7 @@ rownames(track) <- sample.names
 head(track)
 ```
 ```{r}
-silva<-("data/databases/silva_v128/silva_nr_v128_train_set.fa.gz")
+silva<-("~/Micro336/data/databases/silva_nr_v128_train_set.fa.gz")
 taxa <- assignTaxonomy(seqtab.nochim, silva, multithread=TRUE)
 unname(head(taxa))
 ```
@@ -172,7 +172,7 @@ ps
  ps.tx <- transform_sample_counts(ps, function(OTU) OTU/sum(OTU))
  plot_bar(ps.tx, x="Subject", fill="Phylum") 
  
- proc.time() - ptm
+# proc.time() - ptm
   object.size(x=lapply(ls(), get))  
  print(object.size(x=lapply(ls(), get)), units="Mb")
  
