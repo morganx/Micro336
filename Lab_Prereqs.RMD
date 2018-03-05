@@ -1,0 +1,34 @@
+---
+title: "Lab_Setup"
+author: "XCM"
+date: "3/5/2018"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+This is to install lab prereqs so they will run on Student Desktop
+
+```{r cars}
+dir.create('Rlibs')
+# Put these two lines of code in every RMD in order for R to be able to find your local libraries
+newPath = c(.libPaths(), paste0(getwd(), "/Rlibs"))
+.libPaths(newPath)
+
+install.packages("BiocInstaller", repos = "http://bioconductor.org/packages/3.6/bioc", lib = "Rlibs")
+install.packages("knitr", lib = "Rlibs")
+install.packages("devtools", lib = "Rlibs")
+install.packages("kableExtra", lib = "Rlibs")
+install.packages("ggplot2", lib = "Rlibs")
+install.packages("dada2", repos = "http://bioconductor.org/packages/3.6/bioc", lib = "Rlibs")
+install.packages("phyloseq", repos = "http://bioconductor.org/packages/3.6/bioc", lib = "Rlibs")
+install.packages("Rqc", repos = "http://bioconductor.org/packages/3.6/bioc", lib = "Rlibs")
+install.packages("dplyr", lib = "Rlibs")
+install.packages("vegan", lib = "Rlibs")
+install.packages("Rmisc", lib = "Rlibs")
+
+```
+
+
