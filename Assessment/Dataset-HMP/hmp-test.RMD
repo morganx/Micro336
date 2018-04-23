@@ -1,0 +1,12 @@
+---
+title: "HMP-import"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(phyloseq)
+hmp<-load("Dataset-HMP/HMPv35.RData")
+#Example - taking a subset of particular categories
+my_subset<- subset_samples(HMPv35, (HMPbodysubsite=="Tongue_dorsum" | HMPbodysubsite=="Palatine_Tonsils"))
+```
+

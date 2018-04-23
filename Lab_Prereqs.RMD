@@ -17,6 +17,10 @@ dir.create('Rlibs')
 newPath = c(.libPaths(), paste0(getwd(), "/Rlibs"))
 .libPaths(newPath)
 
+source("http://bioconductor.org/biocLite.R")
+biocLite()
+biocLite("dada2", lib="Rlibs")
+
 install.packages("BiocInstaller", repos = "http://bioconductor.org/packages/3.6/bioc", lib = "Rlibs")
 install.packages("knitr", lib = "Rlibs")
 install.packages("devtools", lib = "Rlibs")

@@ -1,0 +1,23 @@
+---
+title: "import_meadows"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+library(ggplot2)
+otus<-read.csv("Dataset-Meadows/otus.csv", header=TRUE, row.names=1, check.names=FALSE)
+otus<-t(otus)
+taxa<-read.csv("Dataset-Meadows/tax.csv", row.names=1, check.names=FALSE, header=TRUE)
+meta<-read.table("Dataset-Meadows/sample_data.txt", sep="\t", header=TRUE)
+
+OTU = otu_table(otus, taxa_are_rows=TRUE)
+rownames(OTU)<-paste("sp", rownames(OTU))
+rownames(OTU)<-gsub(" ", "", rownames(OTU) )
+TAX = tax_table(taxa)
+META = sample_data(meta)
+merged <- merge_phyloseq(OTU, TAX, META)
+
+# hint - how to take a subset
+# my_subset<- subset_samples(HMPv35, (HMPbodysubsite=="Tongue_dorsum" | HMPbodysubsite=="Palatine_Tonsils"))
+```
+
