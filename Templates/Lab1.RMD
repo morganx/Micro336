@@ -3,8 +3,8 @@ title: "My First Micro336 Assignment"
 author: "XCM"
 date: "7/6/2017"
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 ---
 
 This is an extremely simple R Markdown example. You can use the white space to write comments and your answers to any questions that are in the lab manual. 
@@ -55,15 +55,15 @@ Answer the following questions for this week's lab homework. Please answer Quest
   a) Based on entire class Google Doc results, do you think a Qubit or a nanodrop is more accurate for quantifying DNA?
   b) Based on entire class Google Doc results, are some sample types particularly problematic? Why might this be?
 
+
 ```{r echo=FALSE}
-# This is a piece of R code has been provided for you to insert your MIMARKS template into # your report after you fill it out. Use Excel to fill out Lab1-Mimarks.csv with your 
-# metadata, and save this file as a .csv when you are finished. Do not change this piece 
-# of code or your markdown will break.
+# This is a piece of R code has been provided for you to insert your #MIMARKS template into # your report after you fill it out. Use Excel #to fill out Lab1-Mimarks.csv with your 
+# metadata, and save this file as a .csv when you are finished. Do not #change this piece of code or your markdown will break.
 
 library(knitr)
 library(kableExtra)
-options(knitr.table.format = "latex")
-template<-read.csv("~/Micro336/manuals/Lab1-Mimarks.csv")
+options(knitr.table.format = "html")
+template<-read.csv("~/Micro336-master/Templates/Lab1-Mimarks.csv")
 template %>%
   kable() %>%
    kable_styling(bootstrap_options = "striped", full_width = F, font_size=7) %>%
@@ -82,8 +82,8 @@ template %>%
 # data  into your report after you fill it out. Use Excel to fill out Lab1-DNA.csv with  
 # your DNA quantity data and save this file as a .csv when you are finished. Do not change # this piece of code or your markdown will break.
 
-options(knitr.table.format = "latex")
-template2<-read.csv("~/Micro336/manuals/Lab1-DNA.csv")
+options(knitr.table.format = "html")
+template2<-read.csv("~/Micro336-master/Templates/Lab1-DNA.csv")
 template2 %>%
   kable() %>%
    kable_styling(bootstrap_options = "striped", full_width = F, font_size=7) %>%
