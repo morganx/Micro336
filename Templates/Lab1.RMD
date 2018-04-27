@@ -26,6 +26,12 @@ b<-2
 print(a + b)
 ```
 
+Please insert your code that imports your DNA abundance data, assigns it to a variable, shows the contents of the variable, and generates a plot here:
+
+```{r}
+# Insert your code here
+```
+
 Questions for Assessment:
 
 Answer the following questions for this week's lab homework. Please answer Question #1 prior to Wednesday lab.

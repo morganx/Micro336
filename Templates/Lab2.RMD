@@ -45,8 +45,8 @@ fnRs <- sort(list.files(path, pattern="-R2.fq.gz"))
 sample.names <- sapply(strsplit(fnFs, "-"), `[`, 1)
 fnFs <- file.path(path, fnFs)
 fnRs <- file.path(path, fnRs)
-plotQualityProfile(fnFs)
-plotQualityProfile(fnRs)
+#plotQualityProfile(fnFs)
+#plotQualityProfile(fnRs)
 
 # Make quality control plots of our data
 
@@ -55,6 +55,7 @@ for(pair in pairs)
 {  
 qa.sub <- subsetByPair(qa, pair)
 f<-rqcReadWidthPlot(qa.sub) + theme(text=element_text(size=6), axis.text.x=element_text(angle=90, hjust=1)) + scale_x_discrete( breaks=seq(0, 250, 5))
+f
 print(f)
 }
   
