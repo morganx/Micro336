@@ -1,0 +1,155 @@
+---
+title: "Micro336 Lab 2"
+author: "XCM"
+date: "7/6/2017"
+output:
+  pdf_document: default
+  html_document: default
+  word_document: default
+---
+
+This week's questions and your answers:
+
+1. Describe the data you are analyzing today. What was sequenced to generate these samples, and how are these four samples different from one another?
+
+
+```{r, echo=FALSE}
+#This code chunk loads the libraries needed for today & sets our working directory
+library("dada2")
+library("Rqc")
+library("phyloseq")
+setwd("~/Micro336/")
+```
+
+
+
+```{r}
+# First, change our path to the directory containing the fastq files after unzipping so R can find these files
+
+path <- "data" 
+qa<-rqc(path=path, pattern=".fq.gz")
+```
+
+```{r}
+#If I did this correctly, running the next command should show me the list of files in the data folder that I downloaded at the beginning of class 
+
+list.files(path)
+
+#This piece of code assigns files that end with –R1.fq.gz to the list of forward fastq files (fnFs), and files that end with –R2.fq.gz to the list of reverse fastq  files (FnRs)
+
+fnFs <- sort(list.files(path, pattern="-R1.fq.gz"))
+fnRs <- sort(list.files(path, pattern="-R2.fq.gz"))
+
+# What are the actual names of our samples? Let’s parse them out of the files.
+
+sample.names <- sapply(strsplit(fnFs, "-"), `[`, 1)
+fnFs <- file.path(path, fnFs)
+fnRs <- file.path(path, fnRs)
+plotQualityProfile(fnFs)
+plotQualityProfile(fnRs)
+
+# Make quality control plots of our data
+
+pairs <- unique(perFileInformation(qa)$pair)
+for(pair in pairs) 
+{  
+qa.sub <- subsetByPair(qa, pair)
+f<-rqcReadWidthPlot(qa.sub) + theme(text=element_text(size=6), axis.text.x=element_text(angle=90, hjust=1)) + scale_x_discrete( breaks=seq(0, 250, 5))
+print(f)
+}
+  
+```
+
+
+2. 	Most Illumina sequencing runs for 16S rRNA are either 150 bp x 2, 250 bp x 2, or 300 bp x 2 paired ends. What is the length of paired end reads used for this Illumina run?
+
+
+3.	a. Approximately what is the median read quality and quality range at the end of read1 in the raw data?(Just describe the general tendency of all four forward plots, and estimate).
+
+
+    b. Approximately what is the median read quality and quality range at the end of read2 in the raw data? (Just describe the geeral tendency of all four reverse plots, and estimate )
+
+    c. What is different about the quality of read1 and read2 in the raw data?
+    
+    d.  Given that higher read quality indicates a lower sequencing error rate, does read1 or read2 in the raw data have a higher error rate?
+
+
+4.	
+  a. In the processed data (top plots), what is the median read quality at the ends of read 1 and 2?
+
+  b. What did the processing step do to read quality?
+
+
+```{r}
+filt_path <- file.path(path, "filtered") # Place filtered files in filtered/ subdirectory
+filtFs <- file.path(filt_path, paste0(sample.names, "_F_filt.fastq.gz"))
+filtRs <- file.path(filt_path, paste0(sample.names, "_R_filt.fastq.gz"))
+
+#I'm saving the name "filterandtrim" but we're just filtering
+out <- filterAndTrim(fnFs, filtFs, fnRs, filtRs, truncLen=c(250,250),
+              maxN=0, maxEE=c(2,2), truncQ=2, rm.phix=TRUE,
+              compress=TRUE, multithread=TRUE)
+head(out)
+
+
+errF <- learnErrors(filtFs, multithread=TRUE)
+errR <- learnErrors(filtRs, multithread=TRUE)
+```
+
+Infer sequence variants in each sample
+```{r}
+derepFs <- derepFastq(filtFs, verbose=TRUE)
+derepRs <- derepFastq(filtRs, verbose=TRUE)
+# Name the derep-class objects by the sample names
+names(derepFs) <- sample.names
+names(derepRs) <- sample.names
+dadaFs <- dada(derepFs, err=errF, multithread=TRUE)
+dadaRs <- dada(derepRs, err=errR, multithread=TRUE)
+print(dadaFs[[1]])
+print(dadaRs[[1]])
+mergers <- mergePairs(dadaFs, derepFs, dadaRs, derepRs, verbose=TRUE)
+# Inspect the merger data.frame from the first sample
+head(mergers[[1]])
+```
+Make merged data into table & remove chimeras
+```{r}
+seqtab <- makeSequenceTable(mergers)
+dim(seqtab)
+table(nchar(getSequences(seqtab)))
+seqtab.nochim <- removeBimeraDenovo(seqtab, method="consensus", multithread=TRUE, verbose=TRUE)
+dim(seqtab.nochim)
+sum(seqtab.nochim)/sum(seqtab)
+```
+Bookkeeping of how many reads were lost @ pipeline stages:
+```{r}
+getN <- function(x) sum(getUniques(x))
+track <- cbind(out, sapply(dadaFs, getN), sapply(mergers, getN), rowSums(seqtab), rowSums(seqtab.nochim))
+colnames(track) <- c("input", "filtered", "denoised", "merged", "tabled", "nonchim")
+rownames(track) <- sample.names
+head(track)
+```
+```{r}
+silva<-("~/Micro336/data/databases/silva_nr_v128_train_set.fa.gz")
+taxa <- assignTaxonomy(seqtab.nochim, silva, multithread=TRUE)
+unname(head(taxa))
+```
+
+Send to Phyloseq
+```{r}
+samples.out <- rownames(seqtab.nochim)
+subject <- samples.out
+samdf <- data.frame(Subject=subject)
+rownames(samdf) <- samples.out
+
+# Construct phyloseq object (straightforward from dada2 outputs)
+ps <- phyloseq(otu_table(seqtab.nochim, taxa_are_rows=FALSE), 
+               sample_data(samdf), 
+               tax_table(taxa))
+ps
+
+# What do our reads per sample & taxonomic distribution look like?
+ plot_bar(ps, x="Subject", fill="Phylum") 
+ ps.tx <- transform_sample_counts(ps, function(OTU) OTU/sum(OTU))
+ plot_bar(ps.tx, x="Subject", fill="Phylum") 
+ 
+```

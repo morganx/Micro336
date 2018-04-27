@@ -1,0 +1,94 @@
+---
+title: "My First Micro336 Assignment"
+author: "XCM"
+date: "7/6/2017"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+This is an extremely simple R Markdown example. You can use the white space to write comments and your answers to any questions that are in the lab manual. 
+
+R will execute commands that are between three backticks followed by {r}, like the code block underneath this sentence.
+
+```{r}
+#R will not execute this comment because it starts with #, but it will execute the code underneath
+print ("Welcome to Micro336!")
+```
+
+The preceding three backticks indicate the end of the block of code, so I can put more comments here.
+
+```{r}
+# This is my second chunk of R code
+print("I can't wait to learn to use R!")
+a<-1
+b<-2
+print(a + b)
+```
+
+Questions for Assessment:
+
+Answer the following questions for this week's lab homework. Please answer Question #1 prior to Wednesday lab.
+
+1) Do you think that water, human, or soil samples will be the most difficult to extract significant quantities of DNA from? Why?
+
+2) Fill out the MIMARKS template for the samples you've collected for this week's lab (Lab1-Mimarks.csv):
+
+
+3) 
+  a) Did you see bands on your gel for your positive control? 
+  b) Did you see a band on your gel for your negative control?
+  c) Did any samples fail to amplify?
+  d) Did PCR band intensity correspond to DNA quantity?
+
+
+
+4) Based on your own results, do you think a Qubit or a nanodrop is more accurate for  quantifying DNA?
+
+5) 
+  a) Based on entire class Google Doc results, do you think a Qubit or a nanodrop is more accurate for quantifying DNA?
+  b) Based on entire class Google Doc results, are some sample types particularly problematic? Why might this be?
+
+```{r echo=FALSE}
+# This is a piece of R code has been provided for you to insert your MIMARKS template into # your report after you fill it out. Use Excel to fill out Lab1-Mimarks.csv with your 
+# metadata, and save this file as a .csv when you are finished. Do not change this piece 
+# of code or your markdown will break.
+
+library(knitr)
+library(kableExtra)
+options(knitr.table.format = "latex")
+template<-read.csv("~/Micro336/manuals/Lab1-Mimarks.csv")
+template %>%
+  kable() %>%
+   kable_styling(bootstrap_options = "striped", full_width = F, font_size=7) %>%
+   row_spec(0, angle = -45) %>%
+  column_spec(1, border_right = T, width="8em") %>%
+  column_spec(2, width = "6em") %>%
+   column_spec(3, width = "5em") %>%
+   column_spec(4, width = "5em") %>%
+   column_spec(5, width = "5em") %>%
+   column_spec(6, width = "5em")
+```
+
+
+```{r echo=FALSE}
+# This is a piece of R code has been provided for you to insert your DNA quantification
+# data  into your report after you fill it out. Use Excel to fill out Lab1-DNA.csv with  
+# your DNA quantity data and save this file as a .csv when you are finished. Do not change # this piece of code or your markdown will break.
+
+options(knitr.table.format = "latex")
+template2<-read.csv("~/Micro336/manuals/Lab1-DNA.csv")
+template2 %>%
+  kable() %>%
+   kable_styling(bootstrap_options = "striped", full_width = F, font_size=7) %>%
+   row_spec(0, angle = -45) %>%
+  column_spec(1, border_right = T, width="8em") %>%
+  column_spec(2, width = "6em") %>%
+   column_spec(3, width = "5em") %>%
+   column_spec(4, width = "5em") %>%
+   column_spec(5, width = "5em") %>%
+     column_spec(6, width = "5em") %>%
+   column_spec(7, width = "5em")
+
+```
+

@@ -1,0 +1,854 @@
+---
+output: pdf_document
+---
+
+========================================================
+
+## Load [the phyloseq package](http://joey711.github.com/phyloseq/)
+```{r load_phyloseq, message=FALSE}
+library("phyloseq")
+setwd("~/micro336/")
+ptm <- proc.time()
+```
+
+### Load the HMPv35 dataset.
+Create a temporary local file where there large file will be downloaded and read-from.
+#This file downloadable from: https://raw.github.com/joey711/phyloseq-demo/gh-pages/HMPv35.RData but is included in your class data directory
+```{r download-hmpv35}
+load("data/HMPv35.RData")
+HMPv35
+```
+
+
+
+
+## Investigate Some Basic Features of HMPv35
+For more advanced tools for exploring the data, see [additional phyloseq documentation](http://joey711.github.com/phyloseq/)
+
+```{r explore-HMPv35}
+ntaxa(HMPv35)
+nsamples(HMPv35)
+rank_names(HMPv35)
+head(tax_table(HMPv35))
+sample_variables(HMPv35)
+
+levels(sample_data(HMPv35)$HMPbodysubsite)
+HMPv35saliva = subset_samples(HMPv35, HMPbodysubsite == "Saliva")
+HMPv35saliva
+nsamples(HMPv35saliva)
+sample_names(HMPv35saliva)[1:10]
+```
+
+##Lets explore our data
+```{r How many sequences or taxa per sample}
+taxa_sums(HMPv35)[1:10]
+sample_sums(HMPv35)[1:10]
+```
+
+
+###Compare sequences per sample or OTU
+```{r Compare sequences per sample or OTU}
+library(ggplot2)
+readsumsdf = data.frame(nreads = sort(taxa_sums(HMPv35), TRUE), sorted = 1:ntaxa(HMPv35), 
+                        type = "OTU")
+readsumsdf = rbind(readsumsdf, data.frame(nreads = sort(sample_sums(HMPv35), 
+                                                        TRUE), sorted = 1:nsamples(HMPv35), type = "Samples"))
+title = "Total number of reads"
+p = ggplot(readsumsdf, aes(x = sorted, y = nreads)) + geom_bar(stat = "identity")
+p<-p + ggtitle(title) + scale_y_log10() + facet_wrap(~type, 1, scales = "free")
+print(p)
+```
+
+###Compare sequences per sample or OTU saliva only
+```{r Compare sequences per sample or OTU saliva}
+readsumsdf = data.frame(nreads = sort(taxa_sums(HMPv35saliva), TRUE), sorted = 1:ntaxa(HMPv35saliva), 
+                        type = "OTU")
+readsumsdf = rbind(readsumsdf, data.frame(nreads = sort(sample_sums(HMPv35saliva), 
+                                                        TRUE), sorted = 1:nsamples(HMPv35saliva), type = "Samples"))
+title = "Total number of reads"
+p = ggplot(readsumsdf, aes(x = sorted, y = nreads)) + geom_bar(stat = "identity")
+p<-p + ggtitle(title) + scale_y_log10() + facet_wrap(~type, 1, scales = "free")
+print(p)
+```
+
+```{r Calculate alpha diversity [Richness, Shannon] for untrimmed}
+alpha_summary_H35_sal<- estimate_richness(HMPv35saliva, measures = c("Observed", "Shannon"))
+alpha_meta_H35_sal <- data.frame(alpha_summary_H35_sal, sample_data(HMPv35saliva))
+p = plot_richness(HMPv35saliva, x = "sex", measures=c("Observed", "Shannon"))
+p<-p + geom_boxplot()
+print(p)
+```
+
+Check that all OTUs have representative counts  
+For here taxa = OTU  
+__Commands interpretation:__  
+_Total number of taxa in dataset:_ sum(taxa_sums(HMPv35saliva) > 0)   
+
+_Any taxa with no hits:_ any(taxa_sums(HMPv35saliva)== 0)
+
+```{r identify taxa with only zeros, results='markup', echo=TRUE}
+sum(taxa_sums(HMPv35saliva) > 0)
+any(taxa_sums(HMPv35saliva)== 0)
+sum(taxa_sums(HMPv35saliva) == 0)
+any(taxa_sums(HMPv35saliva) > 1)
+sum(taxa_sums(HMPv35saliva) > 1)
+any(taxa_sums(HMPv35saliva) < 1)
+sum(taxa_sums(HMPv35saliva) < 1)
+```
+
+#####Prune taxa with less than 1 count and check taxa numbers again
+```{r  Save original file and create new file with only present (no zeroes) taxa, results='markup', echo=TRUE}
+
+#Create new file with only present (no zeroes) taxa
+
+H35_sal_trim = prune_taxa(taxa_sums(HMPv35saliva) > 1, HMPv35saliva)
+any(sample_sums(H35_sal_trim) == 0)
+any(sample_sums(H35_sal_trim) > 0)
+sum(taxa_sums(H35_sal_trim) > 0)
+any(sample_sums(H35_sal_trim) < 1)
+sum(taxa_sums(H35_sal_trim) < 1)
+```
+
+###Compare sequences per sample or OTU for trimmed
+```{r Compare sequences per sample or OTU trimmed}
+readsumsdf = data.frame(nreads = sort(taxa_sums(H35_sal_trim), TRUE), sorted = 1:ntaxa(H35_sal_trim), 
+                        type = "OTU")
+readsumsdf = rbind(readsumsdf, data.frame(nreads = sort(sample_sums(H35_sal_trim), 
+                                                        TRUE), sorted = 1:nsamples(H35_sal_trim), type = "Samples"))
+title = "Total number of reads"
+p = ggplot(readsumsdf, aes(x = sorted, y = nreads)) + geom_bar(stat = "identity")
+p<-p + ggtitle(title) + scale_y_log10() + facet_wrap(~type, 1, scales = "free")
+```
+Needs bugfix - these dfs do not join together 
+#```{r Calculate alpha diversity [Richness, Shannon] for trimmed }
+alpha_summary_H35_sal_trim<- estimate_richness(H35_sal_trim, measures = c("Observed", "Shannon"))
+alpha_meta_H35_sal_trim <- data.frame(alpha_summary_H35_sal_trim, sample_data(H35_sal_trim))
+p = plot_richness(H35_sal_trim, x = "sex", measures=c("Observed", "Shannon"))
+p<-p + geom_boxplot()
+print(p)
+summary(alpha_summary_H35_sal_trim)
+#```
+
+
+```{r Plot sequences using a histogram for ease of viewing}
+
+# Make a data frame with a column for the read counts of each sample
+sample_sum_df <- data.frame(sum = sample_sums(HMPv35saliva))
+
+# Histogram of sample read counts
+p<-ggplot(sample_sum_df, aes(x = sum)) + 
+  geom_histogram(color = "black", fill = "indianred", binwidth = 1000) +
+  ggtitle("Distribution of sample sequencing depth") + 
+  xlab("Read counts") +
+  theme(axis.title.y = element_blank()) + scale_x_continuous(breaks = seq(0, 30000, by = 5000)) # Ticks from 0-30000, every 5000
+print(p)
+summary(sample_sum_df)
+```
+
+#disabled d/t bug
+#```{r rarefy and Calculate alpha diversity [Richness, Shannon] for rarified dataset }
+
+H35_sal_rare = rarefy_even_depth(H35_sal_trim, 1000)
+
+alpha_summary_H35_sal_rare<- estimate_richness(H35_sal_rare, measures = c("Observed", "Shannon"))
+alpha_meta_H35_sal_rare <- data.frame(alpha_summary_H35_sal_rare, sample_data(H35_sal_trim))
+summary(alpha_summary_H35_sal_rare)
+
+p = plot_richness(H35_sal_rare, x = "sex", measures=c("Observed", "Shannon"))
+p<-p + geom_boxplot()
+print(p)
+#calculate t-test to compare trimmed vs rarified results
+ttest <- t(sapply(alpha_summary_H35_sal_rare, function(x) unlist(t.test(x~sample_data(H35_sal_rare)$sex)[c("estimate","p.value","statistic","conf.int")])))
+ttest
+
+ttest <- t(sapply(alpha_summary_H35_sal_trim, function(x) unlist(t.test(x~sample_data(H35_sal_trim)$sex)[c("estimate","p.value","statistic","conf.int")])))
+ttest
+#```
+
+
+```{r compare beta div using NMDS }
+#library(vegan)
+
+#trimmed
+NMDS.ord <- ordinate(H35_sal_trim, "NMDS", "bray")
+
+sampleplot<-plot_ordination(H35_sal_trim, NMDS.ord, type = "samples", color = "sex") + scale_colour_manual(values=c("black", "blue"))
+#stressplot(NMDS.ord)
+sampleplot <-sampleplot + geom_point()
+#print(sampleplot)
+                             
+#rarified
+NMDS.ord <- ordinate(H35_sal_rare, "NMDS", "bray")
+
+sampleplot = plot_ordination(H35_sal_rare, NMDS.ord, type = "samples", color = "sex") + scale_colour_manual(values=c("black", "blue"))
+print(sampleplot)
+#print(stressplot(NMDS.ord))
+                          
+```
+
+
+Exploring community composition
+
+```{r plot phylum by sex percent transformed (stackplot) }
+library(plyr)
+library(dplyr)
+#library(scales)
+
+
+# melt to long format (for ggploting) 
+# prune out phyla below 1% in each sample
+H35_sal_rare_over1 <- H35_sal_rare %>%
+  tax_glom(taxrank = "Phylum")  %>%
+  transform_sample_counts(function(x) {x/sum(x)} ) %>%
+  psmelt() %>%      
+  filter(Abundance > 0.01)   %>%                      
+  arrange(Phylum)
+
+d<- ggplot(H35_sal_rare_over1,aes(x=sex,y=Abundance,fill=Phylum))+ geom_bar(stat="identity",position="fill") +  scale_y_continuous()
+
+b<- d+ ylab("Relative Abundance")
+
+a<- b+ scale_fill_manual(name="Phylum",values = c("#CBD588", "#5F7FC7", "orange","#DA5724", "#508578", "#CD9BCD",
+                                                 "#AD6F3B", "#673770","#D14285", "#652926", "#C84248", 
+                                                 "#8569D5", "#5E738F","#D1A33D", "#8A7C64", "#599861"))
+
+z<- a+ theme(axis.title.x = element_blank(),
+            axis.text.x = element_text(angle=0, colour = "black", vjust=1, hjust = 0.5, size=18),
+            axis.text.y = element_text(colour = "black", size=18),
+            axis.title.y = element_text(face="bold",size=18),
+            plot.title = element_text(size = 18),
+            legend.title =element_text(size = 18),
+            legend.text = element_text(size = 18),
+            legend.position="right",
+            legend.key.size = unit(0.50, "cm"),
+            strip.text.x = element_text(size=18, face="bold"),
+            strip.text.y = element_text(size=18, face="bold"),
+            panel.background = element_blank(),
+            panel.border = element_rect(fill = NA, colour = "black"),
+            strip.background = element_rect(colour="black"))
+
+y<- z+ guides(fill = guide_legend(reverse = TRUE, ncol=1))
+
+print(y)
+                          
+```
+
+
+```{r subset by fusobacteria and plot by genus percent transformed (stackplot) }
+
+HPR.fuso = subset_taxa(H35_sal_rare , Phylum == "Fusobacteria")
+
+# melt to long format (for ggploting) 
+# prune out genera  with no hits in each sample
+HPR.fuso.RA <- HPR.fuso %>%
+  tax_glom(taxrank = "Genus")  %>%
+  transform_sample_counts(function(x) {x/sum(x)} ) %>%
+  psmelt() %>%
+  filter(Abundance > 0.00)   %>%
+  arrange(Genus)
+
+
+d= ggplot(HPR.fuso.RA,aes(x=visitno,y=Abundance,fill=Genus))+ facet_grid(sex~.) + geom_bar(stat="identity",position="fill") +  scale_y_continuous()
+
+b= d+ ylab("Relative Abundance")
+
+a= b+ scale_fill_manual(name="Genus",values = c("#CBD588", "#5F7FC7", "orange","#DA5724", "#508578", "#CD9BCD",
+                                                 "#AD6F3B", "#673770","#D14285", "#652926", "#C84248", 
+                                                 "#8569D5", "#5E738F","#D1A33D", "#8A7C64", "#599861"))
+
+z= a+ theme(axis.title.x = element_blank(),
+            axis.text.x = element_text(angle=0, colour = "black", vjust=1, hjust = 0.5, size=18),
+            axis.text.y = element_text(colour = "black", size=18),
+            axis.title.y = element_text(face="bold",size=18),
+            plot.title = element_text(size = 18),
+            legend.title =element_text(size = 18),
+            legend.text = element_text(size = 18),
+            legend.position="right",
+            legend.key.size = unit(0.50, "cm"),
+            strip.text.x = element_text(size=18, face="bold"),
+            strip.text.y = element_text(size=18, face="bold"),
+            panel.background = element_blank(),
+            panel.border = element_rect(fill = NA, colour = "black"),
+            strip.background = element_rect(colour="black"))
+
+y= z+ guides(fill = guide_legend(reverse = TRUE, ncol=1))
+
+print(y)
+```
+
+```{r subset by fusobacteria and plot by genus absolute abundance }
+
+HPR.fuso.AA = subset_taxa(H35_sal_rare , Phylum == "Fusobacteria")
+
+
+f<-plot_bar(HPR.fuso, x="visitno", facet_grid = sex~Genus)
+print(f)
+```
+
+Focusing on differences in community
+```{r Resubset based on saliva vs stool and redo analysis}
+
+#subset data by saliva and stool
+HMPSvS = subset_samples(HMPv35, HMPbodysubsite == "Saliva" | HMPbodysubsite == "Stool")
+HMPSvS = prune_taxa(taxa_sums(HMPSvS) > 1, HMPSvS)
+HMPSvS
+HMPSvS_rare = rarefy_even_depth(HMPSvS, 1000)
+HMPSvS_rare
+
+
+alpha_summary_HMPSvS_rare<- estimate_richness(HMPSvS_rare, measures = c("Observed", "Shannon"))
+alpha_meta_HMPSvS_rare <- data.frame(alpha_summary_HMPSvS_rare, sample_data(HMPSvS_rare))
+summary(alpha_summary_HMPSvS_rare)
+
+p = plot_richness(HMPSvS_rare, x = "HMPbodysubsite", measures=c("Observed", "Shannon"))
+p + geom_boxplot()
+print(p)
+# p = plot_richness(HMPSvS_rare, x = "sex", color = "HMPbodysubsite", measures=c("Observed", "Shannon"))
+# p + geom_boxplot() 
+
+NMDS.ord <- ordinate(HMPSvS_rare, "NMDS", "bray")
+
+sampleplot = plot_ordination(HMPSvS_rare, NMDS.ord, type = "samples", color = "HMPbodysubsite") + scale_colour_manual(values=c("black", "blue"))
+print(sampleplot)
+#print(stressplot(NMDS.ord))
+```
+
+```{r calculate t-test to compare saliva vs stool alpha results}
+
+#calculate t-test to compare saliva vs stool results
+ttest <- t(sapply(alpha_summary_HMPSvS_rare, function(x) unlist(t.test(x~sample_data(HMPSvS_rare)$HMPbodysubsite)[c("estimate","p.value","statistic","conf.int")])))
+ttest
+```
+
+```{r confirm t-test with ANOSIM}
+
+#confirm using ANOSIM
+
+HMPbodysubsite_group = get_variable(HMPSvS_rare, "HMPbodysubsite")
+HMPbodysubsite_ano = anosim(distance(HMPSvS_rare, "bray"), HMPbodysubsite_group)
+HMPbodysubsite_ano$signif
+HMPbodysubsite_ano$statistic
+```
+
+```{r confirm t-test with ADONIS}
+
+#confirm using ADONIS
+
+df = as(sample_data(HMPSvS_rare), "data.frame")
+d = distance(HMPSvS_rare, "bray")
+bodysiteadonis = adonis(d ~ HMPbodysubsite, df)
+bodysiteadonis
+```
+
+```{r SIMPER}
+
+#SIMPER
+HMPSvS_rare_df <- data.frame(otu_table(HMPSvS_rare))
+HMPSvS_rare_df_t <- t(HMPSvS_rare_df)
+HMPSvS_rare_sd <- data.frame(sample_data(HMPSvS_rare))
+(sim <- with(HMPSvS_rare_sd, simper(HMPSvS_rare_df_t, HMPbodysubsite),permutations = 999))
+result <- summary(sim) 
+
+#It is also useful to know the average dissimilarity between the two treatment communities being compared
+#The results showed that the community composition in treatment at 16S rDNA level are 68% different from each other.
+lapply(sim, FUN = function(x){x$overall})
+
+
+#export data
+simper <- result$"Saliva_Stool"
+write.table(simper, "/Users/sergiomorales/Downloads/simper_SalivavStool.txt", sep="\t")
+```
+
+
+#####To allow quantitiative (visual comparison) I subsetted the full data by significantly different OTUs by SIMPER [only 25% of variance] 
+
+```{r}
+#Rename OTU ID and add to tax_table.
+
+tax_table(HMPSvS_rare) <- cbind(tax_table(HMPSvS_rare), OTU=taxa_names(HMPSvS_rare))
+
+simper_25 <- subset(simper, cumsum < 0.25) 
+simper_25 <- data.frame(OTU = rownames(simper_25), simper_25)
+keepTaxa_25 <- simper_25$OTU
+print(keepTaxa_25)
+SIMPERtop25 <- subset_taxa(HMPSvS_rare, OTU %in% keepTaxa_25)
+
+
+#manual version of subsetting by name
+# SIMPERtop25 <- subset_taxa(HMPSvS_rare, OTU=="OTU_97.42864"| OTU=="OTU_97.45365"| OTU=="OTU_97.43343"| OTU=="OTU_97.40451"| OTU=="OTU_97.44941"| OTU=="OTU_97.40560"| OTU=="OTU_97.43147"| OTU=="OTU_97.44851"| OTU=="OTU_97.43346"| OTU=="OTU_97.40551"| OTU=="OTU_97.45246"| OTU=="OTU_97.44594"| OTU=="OTU_97.42356"| OTU=="OTU_97.37770"| OTU=="OTU_97.39795"| OTU=="OTU_97.40359"| OTU=="OTU_97.45429"| OTU=="OTU_97.40593"| OTU=="OTU_97.43133"| OTU=="OTU_97.43685"| OTU=="OTU_97.29789"| OTU=="OTU_97.40681"| OTU=="OTU_97.55"| OTU=="OTU_97.39526"| OTU=="OTU_97.43012"| OTU=="OTU_97.44958"| OTU=="OTU_97.40474"| OTU=="OTU_97.19587"| OTU=="OTU_97.39258"| OTU=="OTU_97.42626"| OTU=="OTU_97.30909"| OTU=="OTU_97.40494"| OTU=="OTU_97.39182"| OTU=="OTU_97.27044"| OTU=="OTU_97.30314"| OTU=="OTU_97.66"| OTU=="OTU_97.51"| OTU=="OTU_97.42854"| OTU=="OTU_97.43188"| OTU=="OTU_97.45310"| OTU=="OTU_97.42663"| OTU=="OTU_97.44836"| OTU=="OTU_97.43028"| OTU=="OTU_97.158"| OTU=="OTU_97.40329"| OTU=="OTU_97.33295"| OTU=="OTU_97.42838"| OTU=="OTU_97.156"| OTU=="OTU_97.39904"| OTU=="OTU_97.108"| OTU=="OTU_97.41849"| OTU=="OTU_97.40656"| OTU=="OTU_97.159"| OTU=="OTU_97.33358"| OTU=="OTU_97.29875"| OTU=="OTU_97.106"| OTU=="OTU_97.22457"| OTU=="OTU_97.62"| OTU=="OTU_97.39352"| OTU=="OTU_97.15266"| OTU=="OTU_97.20"| OTU=="OTU_97.37990"| OTU=="OTU_97.31213"| OTU=="OTU_97.9131"| OTU=="OTU_97.43881"| OTU=="OTU_97.40838"| OTU=="OTU_97.38187"| OTU=="OTU_97.44427"| OTU=="OTU_97.34259"| OTU=="OTU_97.44693"| OTU=="OTU_97.9764"| OTU=="OTU_97.100"| OTU=="OTU_97.45366"| OTU=="OTU_97.221"| OTU=="OTU_97.43049"| OTU=="OTU_97.39302"| OTU=="OTU_97.38639"| OTU=="OTU_97.40621"| OTU=="OTU_97.38446"| OTU=="OTU_97.30614"| OTU=="OTU_97.274"| OTU=="OTU_97.24387"| OTU=="OTU_97.39937"| OTU=="OTU_97.40251"| OTU=="OTU_97.39509"| OTU=="OTU_97.27432"| OTU=="OTU_97.41593"| OTU=="OTU_97.70"| OTU=="OTU_97.40331"| OTU=="OTU_97.42422"| OTU=="OTU_97.154"| OTU=="OTU_97.2041"| OTU=="OTU_97.5145"| OTU=="OTU_97.43072"| OTU=="OTU_97.40055"| OTU=="OTU_97.43017"| OTU=="OTU_97.40"| OTU=="OTU_97.44564"| OTU=="OTU_97.18196"| OTU=="OTU_97.4632"| OTU=="OTU_97.45328"| OTU=="OTU_97.192"| OTU=="OTU_97.164"| OTU=="OTU_97.40308"| OTU=="OTU_97.3221"| OTU=="OTU_97.39413"| OTU=="OTU_97.35552")
+
+dat_SIMPERtop25 <- psmelt(SIMPERtop25)
+
+dat_SIMPERtop25 <- dat_SIMPERtop25[order(dat_SIMPERtop25$Phylum),]
+```
+
+
+###Plot significantly different OTUs at Phylum level (top 25%)
+```{r Phylum abundance for significantly different OTUs Top 25percent}
+
+d= ggplot(dat_SIMPERtop25, aes(x = HMPbodysubsite, y = Abundance, fill = Phylum))+ geom_bar(stat="identity",position="fill") +  scale_y_continuous(labels = percent_format())
+
+c= d+ xlab("HMPbodysubsite")
+
+b= c+ ylab("Abundance")
+
+a= b+ scale_fill_manual(name="Phylum",values = c("grey26", "royalblue", "chartreuse3",  "red", "darkorange","cyan2", "darkgreen", "deepskyblue", "mediumorchid3","#89C5DA", "#DA5724", "#74D944", "#C84248", "#673770", "#D3D93E", "#38333E", "#508578", "#D7C1B1", "#689030",   "#AD6F3B", "#CD9BCD", "#D14285", "#6DDE88", "#652926", "#7FDCC0", "#8569D5", "#5E738F", "#D1A33D", "#8A7C64", "#599861", "blue4", "yellow1", "violetred", "#990000", "#99CC00", "#003300", "#00CCCC", "#9966CC", "#993366", "#990033", "#4863A0", "#000033", "#330000", "#00CC99", "#00FF33", "#00CCFF", "#FF9933", "#660066", "#FF0066", "#330000", "#CCCCFF", "#3399FF", "#66FFFF", "#B5EAAA","#FFE87C"))
+
+z= a+ theme(axis.title.x = element_blank(),
+            axis.text.x = element_text(angle=0, colour = "black", vjust=1, hjust = 0.5, size=18),
+            axis.text.y = element_text(colour = "black", size=18),
+            axis.title.y = element_text(face="bold",size=18),
+            plot.title = element_text(size = 18),
+            legend.title =element_text(size = 18),
+            legend.text = element_text(size = 18),
+            legend.position="right",
+            legend.key.size = unit(0.50, "cm"),
+            strip.text.x = element_text(size=18, face="bold"),
+            strip.text.y = element_text(size=18, face="bold"),
+            panel.background = element_blank(),
+            panel.border = element_rect(fill = NA, colour = "black"),
+            strip.background = element_rect(colour="black"))
+
+y= z+ guides(fill = guide_legend(reverse = TRUE, ncol=1))
+
+y
+```
+
+
+##Too many OTUs to plot Genera so reduced to only top 16 OTUs representing 10% of variance (cumulative sum)
+
+```{r subset by SIMPER Top10percent}
+
+simper_10 <- subset(simper, cumsum < 0.10) 
+simper_10 <- data.frame(OTU = rownames(simper_10), simper_10)
+keepTaxa_10 <- simper_10$OTU
+print(keepTaxa_10)
+SIMPERtop10 <- subset_taxa(HMPSvS_rare, OTU %in% keepTaxa_10)
+
+
+#manual subsetting
+# SIMPERtop10 <- subset_taxa(HMPSvS_rare, OTU=="OTU_97.42864"| OTU=="OTU_97.45365"| OTU=="OTU_97.43343"| OTU=="OTU_97.40451"| OTU=="OTU_97.44941"| OTU=="OTU_97.40560"| OTU=="OTU_97.43147"| OTU=="OTU_97.44851"| OTU=="OTU_97.43346"| OTU=="OTU_97.40551"| OTU=="OTU_97.45246"| OTU=="OTU_97.44594"| OTU=="OTU_97.42356"| OTU=="OTU_97.37770"| OTU=="OTU_97.39795")
+
+dat_SIMPERtop10 <- psmelt(SIMPERtop10)
+
+dat_SIMPERtop10 <- dat_SIMPERtop10[order(dat_SIMPERtop10$Phylum),]
+```
+
+
+###Plot significantly different OTUs at Genus level (top 10%)
+```{r Phylum abundance for significantly different OTUs Top 10percent}
+
+d= ggplot(dat_SIMPERtop10, aes(x = HMPbodysubsite, y = Abundance, fill = Genus))+ geom_bar(stat="identity",position="fill") +  scale_y_continuous(labels = percent_format())
+
+c= d+ xlab("HMPbodysubsite")
+
+b= c+ ylab("Abundance")
+
+a= b+ scale_fill_manual(name="Genus",values = c("grey26", "royalblue", "chartreuse3",  "red", "darkorange","cyan2", "darkgreen", "deepskyblue", "mediumorchid3","#89C5DA", "#DA5724", "#74D944", "#C84248", "#673770", "#D3D93E", "#38333E", "#508578", "#D7C1B1", "#689030",   "#AD6F3B", "#CD9BCD", "#D14285", "#6DDE88", "#652926", "#7FDCC0", "#8569D5", "#5E738F", "#D1A33D", "#8A7C64", "#599861", "blue4", "yellow1", "violetred", "#990000", "#99CC00", "#003300", "#00CCCC", "#9966CC", "#993366", "#990033", "#4863A0", "#000033", "#330000", "#00CC99", "#00FF33", "#00CCFF", "#FF9933", "#660066", "#FF0066", "#330000", "#CCCCFF", "#3399FF", "#66FFFF", "#B5EAAA","#FFE87C"))
+
+z= a+ theme(axis.title.x = element_blank(),
+            axis.text.x = element_text(angle=0, colour = "black", vjust=1, hjust = 0.5, size=18),
+            axis.text.y = element_text(colour = "black", size=18),
+            axis.title.y = element_text(face="bold",size=18),
+            plot.title = element_text(size = 18),
+            legend.title =element_text(size = 18),
+            legend.text = element_text(size = 18),
+            legend.position="right",
+            legend.key.size = unit(0.50, "cm"),
+            strip.text.x = element_text(size=18, face="bold"),
+            strip.text.y = element_text(size=18, face="bold"),
+            panel.background = element_blank(),
+            panel.border = element_rect(fill = NA, colour = "black"),
+            strip.background = element_rect(colour="black"))
+
+y= z+ guides(fill = guide_legend(reverse = TRUE, ncol=1))
+
+y
+
+
+
+SIMPERtop10_gen_glom <- tax_glom(SIMPERtop10, taxrank = 'Genus')
+dat_SIMPERtop10_gen_glom <- psmelt(SIMPERtop10_gen_glom)
+
+dat_SIMPERtop10_gen_glom <- dat_SIMPERtop10_gen_glom[order(dat_SIMPERtop10_gen_glom$Genus),]
+d= ggplot(dat_SIMPERtop10_gen_glom, aes(x = HMPbodysubsite, y = Abundance, fill = Genus))+ geom_bar(stat="identity",position="fill") +  scale_y_continuous(labels = percent_format())
+
+c= d+ xlab("HMPbodysubsite")
+
+b= c+ ylab("Abundance")
+
+a= b+ scale_fill_manual(name="Genus",values = c("grey26", "royalblue", "chartreuse3",  "red", "darkorange","cyan2", "darkgreen", "deepskyblue", "mediumorchid3","#89C5DA", "#DA5724", "#74D944", "#C84248", "#673770", "#D3D93E", "#38333E", "#508578", "#D7C1B1", "#689030",   "#AD6F3B", "#CD9BCD", "#D14285", "#6DDE88", "#652926", "#7FDCC0", "#8569D5", "#5E738F", "#D1A33D", "#8A7C64", "#599861", "blue4", "yellow1", "violetred", "#990000", "#99CC00", "#003300", "#00CCCC", "#9966CC", "#993366", "#990033", "#4863A0", "#000033", "#330000", "#00CC99", "#00FF33", "#00CCFF", "#FF9933", "#660066", "#FF0066", "#330000", "#CCCCFF", "#3399FF", "#66FFFF", "#B5EAAA","#FFE87C"))
+
+z= a+ theme(axis.title.x = element_blank(),
+            axis.text.x = element_text(angle=0, colour = "black", vjust=1, hjust = 0.5, size=18),
+            axis.text.y = element_text(colour = "black", size=18),
+            axis.title.y = element_text(face="bold",size=18),
+            plot.title = element_text(size = 18),
+            legend.title =element_text(size = 18),
+            legend.text = element_text(size = 18),
+            legend.position="right",
+            legend.key.size = unit(0.50, "cm"),
+            strip.text.x = element_text(size=18, face="bold"),
+            strip.text.y = element_text(size=18, face="bold"),
+            panel.background = element_blank(),
+            panel.border = element_rect(fill = NA, colour = "black"),
+            strip.background = element_rect(colour="black"))
+
+y= z+ guides(fill = guide_legend(reverse = TRUE, ncol=1))
+
+y
+
+```
+
+
+
+```{r plot SIMPER absolute abundance Top 10 percent}
+
+library(Rmisc)
+
+sse <- summarySE(dat_SIMPERtop10_gen_glom, measurevar="Abundance", groupvars=c("HMPbodysubsite", "Phylum", "Class", "Family", "Genus"))
+sse
+
+d = ggplot(sse, aes(x = HMPbodysubsite, y = Abundance, fill = Genus)) +  
+  geom_bar(stat = "identity", width = 0.85) + theme_bw() + theme(legend.position = "right", strip.background = element_blank(), panel.grid.major = element_blank()
+                                                                 ,panel.grid.minor = element_blank()
+                                                                 ,panel.background = element_blank())
+
+
+
+c= d+ xlab("HMPbodysubsite")
+
+b= c+ ylab("Abundance")
+
+a= b+ scale_fill_manual(name="Genus",values = c("grey26", "royalblue", "chartreuse3",  "red", "darkorange","cyan2", "darkgreen", "deepskyblue", "mediumorchid3","#89C5DA", "#DA5724", "#74D944", "#C84248", "#673770", "#D3D93E", "#38333E", "#508578", "#D7C1B1", "#689030",   "#AD6F3B", "#CD9BCD", "#D14285", "#6DDE88", "#652926", "#7FDCC0", "#8569D5", "#5E738F", "#D1A33D", "#8A7C64", "#599861", "blue4", "yellow1", "violetred", "#990000", "#99CC00", "#003300", "#00CCCC", "#9966CC", "#993366", "#990033", "#4863A0", "#000033", "#330000", "#00CC99", "#00FF33", "#00CCFF", "#FF9933", "#660066", "#FF0066", "#330000", "#CCCCFF", "#3399FF", "#66FFFF", "#B5EAAA","#FFE87C"))
+
+z= a+ theme(axis.title.x = element_blank(),
+            axis.text.x = element_text(angle=0, colour = "black", vjust=1, hjust = 0.5, size=18),
+            axis.text.y = element_text(colour = "black", size=18),
+            axis.title.y = element_text(face="bold",size=18),
+            plot.title = element_text(size = 18),
+            legend.title =element_text(size = 18),
+            legend.text = element_text(size = 18),
+            legend.position="right",
+            legend.key.size = unit(0.50, "cm"),
+            strip.text.x = element_text(size=18, face="bold"),
+            strip.text.y = element_text(size=18, face="bold"),
+            panel.background = element_blank(),
+            panel.border = element_rect(fill = NA, colour = "black"),
+            strip.background = element_rect(colour="black"))
+
+y= z+ guides(fill = guide_legend(reverse = TRUE, ncol=1))
+
+y
+
+
+
+```
+
+###Plot OTUs (SIMPER Top 11) at Genus level (absolute abundance)
+```{r Genus abundance for significantly different OTUs Top11}
+pd <- position_dodge(0.1) # move dots .01 to the left and right to avoid overlap
+d = ggplot(sse, aes(x = HMPbodysubsite, y = Abundance, fill = sort(Genus))) + facet_grid(~Genus)+
+  geom_bar(stat = "identity", width = 0.85) + theme_bw() + theme(legend.position = "right", strip.background = element_blank(), panel.grid.major = element_blank()
+                                                                 ,panel.grid.minor = element_blank()
+                                                                 ,panel.background = element_blank())
+
+
+
+c= d+ xlab("HMPbodysubsite") + geom_errorbar(aes(ymin=Abundance-se, ymax=Abundance+se), colour="black", position=pd)
+
+b= c+ ylab("Abundance")
+
+a= b+ scale_fill_manual(name="Genus",values = c("grey26", "royalblue", "chartreuse3",  "red", "darkorange","cyan2", "darkgreen", "deepskyblue", "mediumorchid3","#89C5DA", "#DA5724", "#74D944", "#C84248", "#673770", "#D3D93E", "#38333E", "#508578", "#D7C1B1", "#689030",   "#AD6F3B", "#CD9BCD", "#D14285", "#6DDE88", "#652926", "#7FDCC0", "#8569D5", "#5E738F", "#D1A33D", "#8A7C64", "#599861", "blue4", "yellow1", "violetred", "#990000", "#99CC00", "#003300", "#00CCCC", "#9966CC", "#993366", "#990033", "#4863A0", "#000033", "#330000", "#00CC99", "#00FF33", "#00CCFF", "#FF9933", "#660066", "#FF0066", "#330000", "#CCCCFF", "#3399FF", "#66FFFF", "#B5EAAA","#FFE87C"))
+
+z= a+ theme(axis.title.x = element_blank(),
+            axis.text.x = element_text(angle=0, colour = "black", vjust=1, hjust = 0.5, size=18),
+            axis.text.y = element_text(colour = "black", size=18),
+            axis.title.y = element_text(face="bold",size=18),
+            plot.title = element_text(size = 18),
+            legend.title =element_text(size = 18),
+            legend.text = element_text(size = 18),
+            legend.position="right",
+            legend.key.size = unit(0.50, "cm"),
+            strip.text.x = element_text(size=18, face="bold"),
+            strip.text.y = element_text(size=18, face="bold"),
+            panel.background = element_blank(),
+            panel.border = element_rect(fill = NA, colour = "black"),
+            strip.background = element_rect(colour="black"))
+
+y= z+ guides(fill = guide_legend(reverse = TRUE, ncol=1))
+
+y
+
+```
+
+
+
+Confirm SIMPER results with Exact test
+
+#####In order to identify important organisms in each Body Site we can identify OTUs with significant differences across sites
+```{r}
+#check open packages
+(.packages())
+##Close all
+detachAllPackages <- function() {
+  
+  basic.packages <- c("package:stats","package:graphics","package:grDevices","package:utils","package:datasets","package:methods","package:base")
+  
+  package.list <- search()[ifelse(unlist(gregexpr("package:",search()))==1,TRUE,FALSE)]
+  
+  package.list <- setdiff(package.list,basic.packages)
+  
+  if (length(package.list)>0)  for (package in package.list) detach(package, character.only=TRUE)
+  
+}
+
+detachAllPackages()
+
+
+library("phyloseq")
+library("edgeR")
+library(ggplot2)
+library(plyr)
+library(scales)
+library(reshape2)
+library(RColorBrewer)
+library(grid)
+library(empiricalFDR.DESeq2)
+library("DESeq2")
+
+
+#Convert phyloseq OTU count data into DGEList for edgeR package
+##http://joey711.github.io/phyloseq-extensions/edgeR.html
+
+phyloseq_to_edgeR = function(physeq, group, method = "RLE", ...) {
+  require("edgeR")
+  require("phyloseq")
+  # Enforce orientation.
+  if (!taxa_are_rows(physeq)) {
+    physeq <- t(physeq)
+  }
+  x = as(otu_table(physeq), "matrix")
+  # Add one to protect against overflow, log(0) issues.
+  x = x + 1
+  # Check `group` argument
+  if (identical(all.equal(length(group), 1), TRUE) & nsamples(physeq) > 1) {
+    # Assume that group was a sample variable name (must be categorical)
+    group = get_variable(physeq, group)
+  }
+  # Define gene annotations (`genes`) as tax_table
+  taxonomy = tax_table(physeq, errorIfNULL=FALSE)
+  if( !is.null(taxonomy) ){
+    taxonomy = data.frame(as(taxonomy, "matrix"))
+  } 
+  # Now turn into a DGEList
+  y = DGEList(counts = x, group = group, genes = taxonomy, remove.zeros = TRUE, 
+              ...)
+  # Calculate the normalization factors
+  z = calcNormFactors(y, method = method)
+  # Check for division by zero inside `calcNormFactors`
+  if (!all(is.finite(z$samples$norm.factors))) {
+    stop("Something wrong with edgeR::calcNormFactors on this data,\n         non-finite $norm.factors, consider changing `method` argument")
+  }
+  # Estimate dispersions
+  return(estimateTagwiseDisp(estimateCommonDisp(z)))
+}
+
+
+
+
+dge = phyloseq_to_edgeR(HMPSvS_rare, group = "HMPbodysubsite")
+
+# Perform binary test
+et = exactTest(dge)
+# Extract values from test results
+tt = topTags(et, n = nrow(dge$table), adjust.method = "BH", sort.by = "PValue")
+res = tt@.Data[[1]]
+alpha = 0.05
+sigtab = res[(res$FDR <= alpha), ]
+sigtab = cbind(as(sigtab, "data.frame"), as(tax_table(HMPSvS_rare)[rownames(sigtab), ], "matrix"))
+ 
+#subset by most significant only (p value <0.05 and at least a 2-fold change in abudnance)                                                                 
+sigtab_2fold <- subset(sigtab, FDR < 0.05 & logFC >= 2 | logFC <= -2 & FDR < 0.05)
+head(sigtab_2fold)
+```
+
+###Plot significantly different Phyla between Stool and Saliva (p less than 0.05, more than FC2)
+```{r Plot significantly different Phyla between Stool and Saliva}
+brew = brewer.pal(6, "Set1")
+
+theme_set(theme_bw())
+scale_fill_discrete <- function(palname = "Set1", ...) {
+  scale_fill_brewer(palette = palname, ...)
+}
+sigtabgen = subset(sigtab_2fold, !is.na(Phylum))
+# Phylum order
+x = tapply(sigtabgen$logFC, sigtabgen$Phylum, function(x) max(x))
+x = sort(x, TRUE)
+
+sigtabgen$Phylum = factor(as.character(sigtabgen$Phylum), levels = names(x))
+ggplot(sigtabgen, aes(x = Phylum, y = logFC)) + geom_point(size = 6) + theme(axis.text.x = element_text(angle = -90, hjust = 0, vjust = 0.5)) + scale_fill_brewer() + coord_flip()
+```
+
+###Plot significantly different Genera between Saliva and Stool between Stool and Saliva (p less than 0.05, more than FC2)
+```{r Plot significantly different Genera between Saliva and Stool}
+theme_set(theme_bw())
+scale_fill_discrete <- function(palname = "Set1", ...) {
+  scale_fill_brewer(palette = palname, ...)
+}
+sigtabgen = subset(sigtab_2fold, !is.na(Genus))
+# Genera order
+x = tapply(sigtabgen$logFC, sigtabgen$Genus, function(x) max(x))
+x = sort(x, TRUE)
+
+sigtabgen$Genus = factor(as.character(sigtabgen$Genus), levels = names(x))
+ggplot(sigtabgen, aes(x = Genus, y = logFC, color = Phylum)) + geom_point(size = 6) + theme(axis.text.x = element_text(angle = -90, hjust = 0, vjust = 0.5)) + scale_fill_brewer() + coord_flip()
+```
+
+
+#####To allow quantitiative (visual comparison) I subsetted the full data by significantly different OTUs  
+
+```{r subset by Exacttest significant OTUs} 
+#Rename OTU ID and add to tax_table.
+
+# tax_table(HMPSvS_rare) <- cbind(tax_table(HMPSvS_rare), OTU=taxa_names(HMPSvS_rare))
+# 
+# onlysigOTU <- subset_taxa(HMPSvS_rare, OTU=="OTU_97.42864"| OTU=="OTU_97.45365"| OTU=="OTU_97.43343"| OTU=="OTU_97.40451"| OTU=="OTU_97.44941"| OTU=="OTU_97.43147"| OTU=="OTU_97.40560"| OTU=="OTU_97.43346"| OTU=="OTU_97.44851"| OTU=="OTU_97.40551"| OTU=="OTU_97.45246"| OTU=="OTU_97.44594"| OTU=="OTU_97.42356"| OTU=="OTU_97.37770"| OTU=="OTU_97.40359"| OTU=="OTU_97.39795"| OTU=="OTU_97.45429"| OTU=="OTU_97.40593"| OTU=="OTU_97.43685"| OTU=="OTU_97.43133"| OTU=="OTU_97.29789"| OTU=="OTU_97.40681"| OTU=="OTU_97.55"| OTU=="OTU_97.39526"| OTU=="OTU_97.43012"| OTU=="OTU_97.44958"| OTU=="OTU_97.40474"| OTU=="OTU_97.19587"| OTU=="OTU_97.42626"| OTU=="OTU_97.39258"| OTU=="OTU_97.39182"| OTU=="OTU_97.40494"| OTU=="OTU_97.30909"| OTU=="OTU_97.27044"| OTU=="OTU_97.66"| OTU=="OTU_97.30314"| OTU=="OTU_97.51"| OTU=="OTU_97.42854"| OTU=="OTU_97.42663"| OTU=="OTU_97.43028"| OTU=="OTU_97.45310"| OTU=="OTU_97.43188"| OTU=="OTU_97.44836"| OTU=="OTU_97.40329"| OTU=="OTU_97.39904"| OTU=="OTU_97.42838"| OTU=="OTU_97.156"| OTU=="OTU_97.158")
+
+sigtabgen_OTUs <- data.frame(OTU = rownames(sigtabgen), sigtabgen)
+keepTaxa_ET <- sigtabgen_OTUs$OTU
+print(keepTaxa_ET)
+ET_2fold <- subset_taxa(HMPSvS_rare, OTU %in% keepTaxa_ET)
+
+dat_onlysigOTU <- psmelt(ET_2fold)
+
+dat_onlysigOTU <- dat_onlysigOTU[order(dat_onlysigOTU$Phylum),]
+```
+
+
+###Plot significantly different OTUs at Phylum level (absolute abundance)
+```{r Phylum abundance for significantly different OTUs}
+p = ggplot(dat_onlysigOTU, aes(x = HMPbodysubsite, y = Abundance, fill = Phylum)) + facet_grid(.~HMPbodysubsite, drop = TRUE, space = "free", scales = "free") +
+  geom_bar(stat = "identity", width = 0.85) + theme_bw() + theme(legend.position = "right", strip.background = element_blank())
+p
+```
+
+###Plot significantly different OTUs at Genus level (absolute abundance)
+```{r Genus abundance for significantly different OTUs}
+p = ggplot(dat_onlysigOTU, aes(x = HMPbodysubsite, y = Abundance, fill = Genus)) + facet_grid(.~HMPbodysubsite, drop = TRUE, space = "free", scales = "free") +
+  geom_bar(stat = "identity", width = 0.85) + theme_bw() + theme(legend.position = "right", strip.background = element_blank())
+p + scale_fill_manual(values = c("royalblue", "chartreuse3",  "red", "darkorange","cyan2", "darkgreen", "deepskyblue", "mediumorchid3","#89C5DA", "#DA5724", "#74D944", "#C84248", "#673770", "#D3D93E", "#38333E", "#508578", "#D7C1B1", "#689030", "#AD6F3B", "#CD9BCD", "#D14285", "#6DDE88", "#CD9BCD", "#D14285", "#6DDE88", "#652926", "#7FDCC0", "#8569D5", "#5E738F", "#D1A33D", "#8A7C64", "#599861", "blue4", "yellow1", "violetred", "#CD9BCD", "#D14285", "#6DDE88", "#652926", "#7FDCC0", "#8569D5", "#5E738F", "#D1A33D", "#8A7C64", "#599861", "blue4", "yellow1", "violetred", "#990000", "#99CC00", "#003300", "#00CCCC", "#9966CC", "#993366", "#990033", "#4863A0", "#000033", "#330000", "#00CC99", "#00FF33", "#00CCFF", "#FF9933", "#660066", "#FF0066", "slateblue4", "tan4", "tomato4", "steelblue", "springgreen4", "snow4", "slategray2", "plum1", "yellow", "sienna", "#CD9BCD", "#D14285", "#6DDE88", "#652926", "#7FDCC0", "#8569D5", "#5E738F", "#D1A33D", "#8A7C64", "#599861", "blue4", "yellow1", "violetred", "#990000", "#99CC00", "#003300", "#00CCCC", "#9966CC", "#993366", "#990033", "#4863A0", "#000033", "#330000", "#00CC99", "#00FF33", "#00CCFF", "#FF9933", "#660066", "#FF0066", "#FFFFFF", "#0000EE"))
+```
+
+
+
+
+###Plot significant OTUs at Phylum level by HMPbodysubsite (rel abund)
+```{r Pylum rel abundance for significantly different OTUs}
+p= ggplot(dat_onlysigOTU, aes(x = HMPbodysubsite, y = Abundance, fill = Phylum)) 
+
+p +
+  geom_bar(stat="identity",position="fill") +
+  xlab("BODY SITE") +
+  ylab("Abudance") +
+  scale_fill_manual(values = c("grey26", "royalblue", "chartreuse3",  "red", "darkorange","cyan2", "darkgreen", "deepskyblue", "mediumorchid3","#89C5DA", "#DA5724", "#74D944", "#C84248", "#673770", "#D3D93E", "#38333E", "#508578", "#D7C1B1", "#689030", "#AD6F3B", "#CD9BCD", "#D14285", "#6DDE88", "#CD9BCD", "#D14285", "#6DDE88", "#652926", "#7FDCC0", "#8569D5", "#5E738F", "#D1A33D", "#8A7C64", "#599861", "blue4", "yellow1", "violetred", "#CD9BCD", "#D14285", "#6DDE88", "#652926", "#7FDCC0", "#8569D5", "#5E738F", "#D1A33D", "#8A7C64", "#599861", "blue4", "yellow1", "violetred", "#990000", "#99CC00", "#003300", "#00CCCC", "#9966CC", "#993366", "#990033", "#4863A0", "#000033", "#330000", "#00CC99", "#00FF33", "#00CCFF", "#FF9933", "#660066", "#FF0066", "slateblue4", "tan4", "tomato4", "steelblue", "springgreen4", "snow4", "slategray2", "plum1", "yellow", "sienna", "#CD9BCD", "#D14285", "#6DDE88", "#652926", "#7FDCC0", "#8569D5", "#5E738F", "#D1A33D", "#8A7C64", "#599861", "blue4", "yellow1", "violetred", "#990000", "#99CC00", "#003300", "#00CCCC", "#9966CC", "#993366", "#990033", "#4863A0", "#000033", "#330000", "#00CC99", "#00FF33", "#00CCFF", "#FF9933", "#660066", "#FF0066", "#FFFFFF", "#0000EE")) +
+  theme_bw() +
+  theme(
+    plot.background = element_blank()
+    ,panel.grid.major = element_blank()
+    ,panel.grid.minor = element_blank()
+    ,panel.background = element_blank()
+    ,axis.text.x  = element_text(angle=90, vjust=0.5, size=12)
+  )+
+  theme(axis.title.x = element_text(face="bold",size=16),
+        axis.text.x = element_text(angle=30, colour = "black", vjust=1, hjust = 1, size=14),
+        axis.text.y = element_text(colour = "black", size=14),
+        axis.title.y = element_text(face="bold", size=16),
+        plot.title = element_text(size = 18),
+        legend.title = element_text(size=14),
+        legend.text = element_text(size = 13),
+        legend.position="right",
+        #Manipulating the facet features
+        strip.text.x = element_text(size=12, face="bold"),
+        strip.text.y = element_text(size=12, face="bold"),
+        strip.background = element_rect(colour="black")) + # Black rectangle around facet title
+  guides(fill = guide_legend(ncol = 2, title.hjust = 0.4))
+```
+
+###Plot significant OTUs at Genus by HMPbodysubsite (rel abund)
+```{r}
+# Make each species its own physeq object
+speciesList <- tapply(sample_names(onlysigOTU), get_variable(onlysigOTU, "HMPbodysubsite"), c)
+speciesPhyseq <- lapply(speciesList, prune_samples, onlysigOTU)
+
+## For each item in speciesPhyseq find the average of the taxa rows
+
+# Make a list of OTU tables for each species
+speciesOTUtable <- lapply(speciesPhyseq,otu_table)
+
+# Make a list of average OTU table for each species
+speciesAvg <- lapply(speciesOTUtable,rowMeans)
+
+# Put every column of average otu counts back into a matrix where each column is a 
+# species and each row is an OTU
+pooledOTUtable = t(do.call(rbind,speciesAvg))
+pooledOTUtable = data.frame(OTU=row.names(pooledOTUtable),pooledOTUtable)
+
+# Add in taxonomy info for OTUs
+TT = tax_table(onlysigOTU)
+TT = TT[, which(apply(!apply(TT, 2, is.na), 2, any))]
+tdf = data.frame(TT, OTU = taxa_names(onlysigOTU))
+pOTUtax = merge(pooledOTUtable, tdf, by.x = "OTU")
+str(pOTUtax)
+# You will need to change the 6 to the number of columns of metadata you have
+# Add in a column for total sequences
+pOTU = data.frame(pOTUtax,SeqTotal = rowSums(pOTUtax[,2:3]))
+
+# Take only top X OTUs (user defined)
+# Change 500 to whatever number of OTUs you want to look at
+pOTU = pOTU[order(-pOTU$SeqTotal),]
+pOTUtop = pOTU[1:48,]
+
+# This calculaton will tell you what percentage of the data you are representing in the plot
+sum(pOTUtop$SeqTotal)/sum(pOTU$SeqTotal)
+
+# Plot bar chart of phylum level differences
+# Change the 6 to the number of metadata you have AND
+# 8 determines which level of OTUs you look at 
+pOTU.phylum =pOTUtop[,c(2:3,9)]
+melt.phylum = melt(pOTU.phylum,id.vars="Genus")
+colnames(melt.phylum)[2]="OTU"
+agg.phylum=aggregate(.~Genus+OTU,melt.phylum,sum)
+
+##extra colors (, "#CD9BCD", "#D14285", "#6DDE88", "#652926", "#7FDCC0", "#8569D5", "#5E738F", "#D1A33D", "#8A7C64", "#599861", "blue4", "yellow1", "violetred", "#990000", "#99CC00", "#003300", "#00CCCC", "#9966CC", "#993366", "#990033", "#4863A0", "#000033", "#330000", "#00CC99", "#00FF33", "#00CCFF", "#FF9933", "#660066", "#FF0066")
+
+ggplot(agg.phylum,aes(x=OTU,y=value,fill=Genus)) +
+  geom_bar(stat="identity",position="fill") +
+  scale_y_continuous(labels = percent_format())+ 
+  xlab("Depth") +
+  ylab("Relative Abudance") +
+  scale_fill_manual(values = c("grey26", "royalblue", "chartreuse3",  "red", "darkorange","cyan2", "darkgreen", "deepskyblue", "mediumorchid3","#89C5DA", "#DA5724", "#74D944", "#C84248", "#673770", "#D3D93E", "#38333E", "#508578", "#D7C1B1", "#689030", "#AD6F3B", "#CD9BCD", "#D14285", "#6DDE88", "#CD9BCD", "#D14285", "#6DDE88", "#652926", "#7FDCC0", "#8569D5", "#5E738F", "#D1A33D", "#8A7C64", "#599861", "blue4", "yellow1", "violetred", "#CD9BCD", "#D14285", "#6DDE88", "#652926", "#7FDCC0", "#8569D5", "#5E738F", "#D1A33D", "#8A7C64", "#599861", "blue4", "yellow1", "violetred", "#990000", "#99CC00", "#003300", "#00CCCC", "#9966CC", "#993366", "#990033", "#4863A0", "#000033", "#330000", "#00CC99", "#00FF33", "#00CCFF", "#FF9933", "#660066", "#FF0066", "slateblue4", "tan4", "tomato4", "steelblue", "springgreen4", "snow4", "slategray2", "plum1", "yellow", "sienna", "#CD9BCD", "#D14285", "#6DDE88", "#652926", "#7FDCC0", "#8569D5", "#5E738F", "#D1A33D", "#8A7C64", "#599861", "blue4", "yellow1", "violetred", "#990000", "#99CC00", "#003300", "#00CCCC", "#9966CC", "#993366", "#990033", "#4863A0", "#000033", "#330000", "#00CC99", "#00FF33", "#00CCFF", "#FF9933", "#660066", "#FF0066", "#FFFFFF", "#0000EE")) +
+  theme_bw() +
+  theme(
+    plot.background = element_blank()
+    ,panel.grid.major = element_blank()
+    ,panel.grid.minor = element_blank()
+    ,panel.background = element_blank()
+    ,axis.text.x  = element_text(angle=90, vjust=0.5, size=12)
+  )+
+  theme(axis.title.x = element_text(face="bold",size=14),
+        axis.text.x = element_text(angle=30, colour = "black", vjust=1, hjust = 1, size=14),
+        axis.text.y = element_text(colour = "black", size=14),
+        axis.title.y = element_text(face="bold", size=14),
+        legend.title = element_text(size=14),
+        legend.text = element_text(size = 12),
+        legend.position="right",
+        #Manipulating the facet features
+        strip.text.x = element_text(size=12, face="bold"),
+        strip.text.y = element_text(size=12, face="bold"),
+        strip.background = element_rect(colour="black")) + # Black rectangle around facet title
+  guides(fill = guide_legend(ncol = 2, title.hjust = 0.4))
+ proc.time() - ptm
+ object.size(x=lapply(ls(), get))  
+ print(object.size(x=lapply(ls(), get)), units="Mb")
+```
