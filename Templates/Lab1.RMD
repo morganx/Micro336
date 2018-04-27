@@ -57,8 +57,11 @@ Answer the following questions for this week's lab homework. Please answer Quest
 
 
 ```{r echo=FALSE}
-# This is a piece of R code has been provided for you to insert your #MIMARKS template into # your report after you fill it out. Use Excel #to fill out Lab1-Mimarks.csv with your 
-# metadata, and save this file as a .csv when you are finished. Do not #change this piece of code or your markdown will break.
+# This is a piece of R code has been provided for you to insert your 
+# MIMARKS template into # your report after you fill it out. Use Excel 
+# to fill out Lab1-Mimarks.csv with your 
+# metadata, and save this file as a .csv when you are finished. Do not 
+# change this piece of code or your markdown will break.
 
 library(knitr)
 library(kableExtra)
@@ -78,9 +81,11 @@ template %>%
 
 
 ```{r echo=FALSE}
-# This is a piece of R code has been provided for you to insert your DNA quantification
-# data  into your report after you fill it out. Use Excel to fill out Lab1-DNA.csv with  
-# your DNA quantity data and save this file as a .csv when you are finished. Do not change # this piece of code or your markdown will break.
+# This is a piece of R code has been provided for you to insert your DNA 
+# quantification data  into your report after you fill it out. Use Excel to 
+# fill out Lab1-DNA.csv withyour DNA quantity data and save this file as a 
+# .csv when you are finished. Do not change this piece of code or your markdown 
+# will break.
 
 options(knitr.table.format = "html")
 template2<-read.csv("~/Micro336-master/Templates/Lab1-DNA.csv")
