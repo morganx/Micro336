@@ -2,7 +2,9 @@
 source("https://bioconductor.org/biocLite.R")
 biocLite()
 biocLite("dada2")
+install.packages("devtools")
+library(devtools)
+install_version("vegan", version = "2.4-6", repos = "http://cran.us.r-project.org")
 biocLite("phyloseq")
 biocLite("Rqc")
-install.packages(c("knitr", "devtools", "kableExtra", "ggplot2", "dplyr", "vegan", "Rmisc", "caTools"))
-
+install.packages(c("knitr", "devtools", "kableExtra", "ggplot2", "dplyr", "Rmisc", "caTools"))
