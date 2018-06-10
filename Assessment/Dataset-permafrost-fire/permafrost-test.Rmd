@@ -1,0 +1,12 @@
+---
+title: "Perm_fire-import"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(phyloseq)
+perm_fire<-load("/Users/sergiomorales/Dropbox/Micro336/Lab info/Assessment/Dataset-permafrost-fire/permafrost-fire.RData")
+#Example - Extracting sample_data
+md<-data.frame(sample_data(Tas_rare_phyloseq))
+```
+

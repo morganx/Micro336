@@ -1,0 +1,12 @@
+---
+title: "Wine-import"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(phyloseq)
+Wine_dataset<-load("/Users/sergiomorales/Dropbox/Micro336/Lab info/Assessment/Dataset_wine/Dataset_wine.RData")
+#Example - Extracting sample_data
+md<-data.frame(sample_data(Wine_rare_phyloseq))
+```
+
