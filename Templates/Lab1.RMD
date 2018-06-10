@@ -30,6 +30,12 @@ Please insert your code that imports your DNA abundance data, assigns it to a va
 
 ```{r}
 # Insert your code here
+
+#This code loads my data
+
+# This code shows my data
+
+# This code plots my data
 ```
 
 Questions for Assessment:
