@@ -1,6 +1,6 @@
 ---
 title: "Micro336 Lab 2"
-author: "XCM"
+author: "Your Name Here"
 date: "7/6/2017"
 output:
   pdf_document: default
@@ -10,157 +10,112 @@ output:
 
 This week's questions and your answers:
 
+# Answer this question before running any R code - read the README in ~/Micro336-master/data/
+
 1. Describe the data you are analyzing today. What was sequenced to generate these samples, and how are these four samples different from one another?
 
+# Answer these two questions using your RQC output
+2. 	a. Most Illumina sequencing runs for 16S rRNA are either 150 bp x 2, 250 bp x 2, or 300 bp x 2 paired ends. What is the length of paired end reads used for this Illumina run?
 
-```{r, echo=FALSE}
-#This code chunk loads the libraries needed for today & sets our working directory
-library("dada2")
-library("Rqc")
-library("phyloseq")
-setwd("~/Micro336-master/")
-```
+  b. Approximately what is the median read quality and quality range at the end of read1 in the raw data?(Just describe the general tendency of all four forward plots, and estimate).
 
+  c.  Approximately what is the median read quality and quality range at the end of read2 in the raw data? (Just describe the geeral tendency of all four reverse plots, and estimate )
 
-
-```{r}
-# First, change our path to the directory containing the fastq files after unzipping so R can find these files
-
-path <- "~/Micro336-master/data/" 
-qa<-rqc(path=path, pattern=".fq")
-```
-
-```{r}
-#If I did this correctly, running the next command should show me the list of files in the data folder that I downloaded at the beginning of class 
-
-list.files(path)
-
-#This piece of code assigns files that end with –R1.fq.gz to the list of forward fastq files (fnFs), and files that end with –R2.fq.gz to the list of reverse fastq  files (FnRs)
-
-fnFs <- sort(list.files(path, pattern="-R1.fq"))
-fnRs <- sort(list.files(path, pattern="-R2.fq"))
-
-# What are the actual names of our samples? Let’s parse them out of the files.
-
-sample.names <- sapply(strsplit(fnFs, "-"), `[`, 1)
-fnFs <- file.path(path, fnFs)
-fnRs <- file.path(path, fnRs)
-#plotQualityProfile(fnFs)
-#plotQualityProfile(fnRs)
-
-# Make quality control plots of our data
-
-pairs <- unique(perFileInformation(qa)$pair)
-for(pair in pairs) 
-{  
-qa.sub <- subsetByPair(qa, pair)
-f<-rqcReadWidthPlot(qa.sub) + theme(text=element_text(size=6), axis.text.x=element_text(angle=90, hjust=1)) + scale_x_discrete( breaks=seq(0, 250, 5))
-f
-print(f)
-}
-  
-```
-
-
-2. 	Most Illumina sequencing runs for 16S rRNA are either 150 bp x 2, 250 bp x 2, or 300 bp x 2 paired ends. What is the length of paired end reads used for this Illumina run?
-
-
-3.	a. Approximately what is the median read quality and quality range at the end of read1 in the raw data?(Just describe the general tendency of all four forward plots, and estimate).
-
-
-    b. Approximately what is the median read quality and quality range at the end of read2 in the raw data? (Just describe the geeral tendency of all four reverse plots, and estimate )
-
-    c. What is different about the quality of read1 and read2 in the raw data?
+  d. What is different about the quality of read1 and read2 in the raw data?
     
-    d.  Given that higher read quality indicates a lower sequencing error rate, does read1 or read2 in the raw data have a higher error rate?
+  e.  Given that higher read quality indicates a lower sequencing error rate, does read1 or read2 in the raw data have a higher error rate?
 
 
-4.	
+3.	
   a. In the processed data (top plots), what is the median read quality at the ends of read 1 and 2?
 
   b. What did the processing step do to read quality?
 
+# Answer this question after you have finished running dada2 and are about to import your data into phyloseq
+4. 
+a. Did the filtered or the raw data lose a greater number of sequences during bioinformatic processing?
 
-```{r}
-filt_path <- file.path(path, "filtered") # Place filtered files in filtered/ subdirectory
-filtFs <- file.path(filt_path, paste0(sample.names, "_F_filt.fastq.gz"))
-filtRs <- file.path(filt_path, paste0(sample.names, "_R_filt.fastq.gz"))
+b. At which step were the most sequences lost?
 
-#I'm saving the name "filterandtrim" but we're just filtering
-out <- filterAndTrim(fnFs, filtFs, fnRs, filtRs, truncLen=c(250,250),
-              maxN=0, maxEE=c(2,2), truncQ=2, rm.phix=TRUE,
-              compress=TRUE, multithread=TRUE)
-head(out)
+c. How many chimeric sequences were removed?
+
+# Answer this question after you have used phyloseq to explore your data and compare it to your known truth
+5. 
+a. Did the raw and processed data agree with one another regarding the presence and abundance of taxa within the samples?
+
+b. Based on your answer to A, does how you quality control your data influence your result?
+
+c. How do your staggered and even data compare with the known truth communities? How many total genera were in the original sample, and how many were detected in your data? Were taxa added or missing?
+
+d. Based on your non-log scatterplot of known truth (staggered) vs your data, how well does the abundance of samples in your data reflect its abundance in the original sample? Can you tell whether the processed or raw data comes closer to the truth?
+
+e. Based on your log-axis plots, how well does the abundance of samples in your samples reflect their original abundance? Did the processed or raw data come closer?
+
+f. Based on your results, is 16S rRNA data an exact representation of actual DNA proportions in a sample? 
 
 
-errF <- learnErrors(filtFs, multithread=TRUE)
-errR <- learnErrors(filtRs, multithread=TRUE)
+```{r, chunk1_setup echo=FALSE, message=FALSE, warning=FALSE}
+#This code chunk loads the libraries needed for today & sets our working directory
+library("dada2")
+library("Rqc")
+library("phyloseq")
+library("ggplot2")
+# Set working directory
+setwd("~/Micro336-master/")
+#Set path to data files
+path <- "~/Micro336-master/data" 
 ```
 
-Infer sequence variants in each sample
-```{r}
-derepFs <- derepFastq(filtFs, verbose=TRUE)
-derepRs <- derepFastq(filtRs, verbose=TRUE)
-# Name the derep-class objects by the sample names
-names(derepFs) <- sample.names
-names(derepRs) <- sample.names
-dadaFs <- dada(derepFs, err=errF, multithread=TRUE)
-dadaRs <- dada(derepRs, err=errR, multithread=TRUE)
-print(dadaFs[[1]])
-print(dadaRs[[1]])
-mergers <- mergePairs(dadaFs, derepFs, dadaRs, derepRs, verbose=TRUE)
-# Inspect the merger data.frame from the first sample
-head(mergers[[1]])
-```
-Make merged data into table & remove chimeras
-```{r}
-seqtab <- makeSequenceTable(mergers)
-dim(seqtab)
-table(nchar(getSequences(seqtab)))
-seqtab.nochim <- removeBimeraDenovo(seqtab, method="consensus", multithread=TRUE, verbose=TRUE)
-dim(seqtab.nochim)
-sum(seqtab.nochim)/sum(seqtab)
-```
-Bookkeeping of how many reads were lost @ pipeline stages:
-```{r}
-getN <- function(x) sum(getUniques(x))
-track <- cbind(out, sapply(dadaFs, getN), sapply(mergers, getN), rowSums(seqtab), rowSums(seqtab.nochim))
-colnames(track) <- c("input", "filtered", "denoised", "merged", "tabled", "nonchim")
-rownames(track) <- sample.names
-head(track)
-```
-```{r}
-silva<-("~/Micro336-master/data/databases/silva_nr_v128_train_set.fa")
-taxa <- assignTaxonomy(seqtab.nochim, silva, multithread=TRUE)
-unname(head(taxa))
-```
-
-Send to Phyloseq
-```{r}
-samples.out <- rownames(seqtab.nochim)
-subject <- samples.out
-samdf <- data.frame(Subject=subject)
-rownames(samdf) <- samples.out
-
-# Construct phyloseq object (straightforward from dada2 outputs)
-ps <- phyloseq(otu_table(seqtab.nochim, taxa_are_rows=FALSE), 
-               sample_data(samdf), 
-               tax_table(taxa))
-ps
-
-# What do our reads per sample & taxonomic distribution look like?
- plot_bar(ps, x="Subject", fill="Phylum") 
- ps.tx <- transform_sample_counts(ps, function(OTU) OTU/sum(OTU))
- plot_bar(ps.tx, x="Subject", fill="Phylum") 
- 
-```
-
-How does this compare to known truth?
-```{r}
-sample_data(ps)$Type = c("processed", "processed", "raw", "raw")
-sample_data(ps)$Math = c("even", "staggered", "even", "staggered")
-source("~/Micro336-master/code/summarize_taxa.R")
-summarize_taxa(physeq=ps, Rank="Genus", GroupBy = "Type")
-#Scatterplot raw vs processed
+Use your lab manual to insert appropriate code for this lab into the corresponding chunks. Answer question #2 after running this chunk.
+```{r chunk2_RQC echo=FALSE, message=FALSE}
+# Run RQC to look at quality of reads - insert code here 
 
 ```
+Insert code to parse forward/reverse reads and parse file names here:
+```{r chunk3_fileparse echo=TRUE, message=FALSE, warnings=FALSE}
+```
+
+Insert code to make QC plots with readable X axes here. Answer question #3 after running this chunk.
+```{r chunk4_betterplot echo=FALSE, message=FALSE}
+
+```
+
+Insert code to quality-control data prior to running dada2 here:
+```{r chunk5_dadaQC echo=FALSE, message=FALSE}
+
+```
+Insert code to run dada2 to here:
+```{r chunk6_runDADA echo=FALSE, message=FALSE}
+
+```
+Insert code to make a table and remove chimeras here. 
+```{r chunk7_chimeras echo=FALSE, message=FALSE}
+
+```
+Insert code to tally how many sequences made it through your pipeline. Answer question #4 after running this chunk.
+```{r chunk8_tally echo=FALSE, message=FALSE}
+
+```
+
+Insert code to assign taxonomy here
+```{r chunk9_taxonomy echo=FALSE, message=FALSE}
+
+```
+Insert your code to create a phyloseq object and summary barplots here. Remember to make barplots at a taxonomic level OTHER THAN PHYLUM here. 
+```{r chunk10_physeq echo=FALSE, message=FALSE}
+
+```
+
+Insert your code to create evaluation object here. 
+```{r chunk11_evaluate echo=FALSE, message=FALSE}
+
+```
+
+Insert your code to evaluate unions and intersections here
+```{r chunk12_sets echo=FALSE, message=FALSE}
+```
+
+Insert your code to plot results vs known truths here. Answer question #5 after completing this chunk.
+```{r chunk13_evalplots echo=FALSE, message=FALSE}
+```
+
