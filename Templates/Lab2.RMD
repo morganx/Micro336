@@ -18,7 +18,7 @@ This week's questions and your answers:
 library("dada2")
 library("Rqc")
 library("phyloseq")
-setwd("~/Micro336/")
+setwd("~/Micro336-master/")
 ```
 
 
@@ -26,8 +26,8 @@ setwd("~/Micro336/")
 ```{r}
 # First, change our path to the directory containing the fastq files after unzipping so R can find these files
 
-path <- "data" 
-qa<-rqc(path=path, pattern=".fq.gz")
+path <- "~/Micro336-master/data/" 
+qa<-rqc(path=path, pattern=".fq")
 ```
 
 ```{r}
@@ -37,8 +37,8 @@ list.files(path)
 
 #This piece of code assigns files that end with –R1.fq.gz to the list of forward fastq files (fnFs), and files that end with –R2.fq.gz to the list of reverse fastq  files (FnRs)
 
-fnFs <- sort(list.files(path, pattern="-R1.fq.gz"))
-fnRs <- sort(list.files(path, pattern="-R2.fq.gz"))
+fnFs <- sort(list.files(path, pattern="-R1.fq"))
+fnRs <- sort(list.files(path, pattern="-R2.fq"))
 
 # What are the actual names of our samples? Let’s parse them out of the files.
 
@@ -130,7 +130,7 @@ rownames(track) <- sample.names
 head(track)
 ```
 ```{r}
-silva<-("~/Micro336/data/databases/silva_nr_v128_train_set.fa.gz")
+silva<-("~/Micro336-master/data/databases/silva_nr_v128_train_set.fa")
 taxa <- assignTaxonomy(seqtab.nochim, silva, multithread=TRUE)
 unname(head(taxa))
 ```
@@ -153,4 +153,14 @@ ps
  ps.tx <- transform_sample_counts(ps, function(OTU) OTU/sum(OTU))
  plot_bar(ps.tx, x="Subject", fill="Phylum") 
  
+```
+
+How does this compare to known truth?
+```{r}
+sample_data(ps)$Type = c("processed", "processed", "raw", "raw")
+sample_data(ps)$Math = c("even", "staggered", "even", "staggered")
+source("~/Micro336-master/code/summarize_taxa.R")
+summarize_taxa(physeq=ps, Rank="Genus", GroupBy = "Type")
+#Scatterplot raw vs processed
+
 ```
