@@ -9,11 +9,11 @@ In some of these samples (Even), the same amount of DNA is added from every spec
 
 In other samples (staggered), different amounts of DNA are added from different species.
 
-"Processed" means that the fastq file has been quality controlled with the software "Trimmomatic".
+"Processed" means that the fastq file has been quality controlled with the software "Trimmomatic" by the sequencing provider.
 
 "Raw" means that the fastq has not been quality-controlled.
 
-"Raw Even" and "Processed Even" are exactly the same sequencing data, except that the latter has been quality controlled.
+"Raw Even" and "Processed Even" are exactly the same sequencing data, except that the latter has been quality controlled by the sequencing provider.
 
 The same is true for "Raw Staggered" and "Processed Staggered".
 
