@@ -27,13 +27,13 @@ This week's questions and your answers:
 
 
 3.	
-  a. In the processed data (top plots), what is the median read quality at the ends of read 1 and 2?
+  a. In the processed data (top plots), what is the median read quality at the ends (e.g. the last 30 bases) of read 1 and 2?
 
   b. What did the processing step do to read quality?
 
 # Answer this question after you have finished running dada2 and are about to import your data into phyloseq
 4. 
-a. Did the filtered or the raw data lose a greater number of sequences during bioinformatic processing?
+a. Did the processed or the raw data lose a greater number of sequences during bioinformatic processing?
 
 b. At which step were the most sequences lost?
 
@@ -54,7 +54,7 @@ e. Based on your log-axis plots, how well does the abundance of samples in your 
 f. Based on your results, is 16S rRNA data an exact representation of actual DNA proportions in a sample? 
 
 
-```{r, chunk1_setup echo=FALSE, message=FALSE, warning=FALSE}
+```{r, chunk1_setup, echo=FALSE, message=FALSE, warning=FALSE}
 #This code chunk loads the libraries needed for today & sets our working directory
 library("dada2")
 library("Rqc")
@@ -67,55 +67,55 @@ path <- "~/Micro336-master/data"
 ```
 
 Use your lab manual to insert appropriate code for this lab into the corresponding chunks. Answer question #2 after running this chunk.
-```{r chunk2_RQC echo=FALSE, message=FALSE}
+```{r chunk2_RQC, echo=FALSE, message=FALSE}
 # Run RQC to look at quality of reads - insert code here 
 
 ```
 Insert code to parse forward/reverse reads and parse file names here:
-```{r chunk3_fileparse echo=TRUE, message=FALSE, warnings=FALSE}
+```{r chunk3_fileparse, echo=TRUE, message=FALSE, warnings=FALSE}
 ```
 
 Insert code to make QC plots with readable X axes here. Answer question #3 after running this chunk.
-```{r chunk4_betterplot echo=FALSE, message=FALSE}
+```{r chunk4_betterplot, echo=FALSE, message=FALSE}
 
 ```
 
 Insert code to quality-control data prior to running dada2 here:
-```{r chunk5_dadaQC echo=FALSE, message=FALSE}
+```{r chunk5_dadaQC, echo=FALSE, message=FALSE}
 
 ```
 Insert code to run dada2 to here:
-```{r chunk6_runDADA echo=FALSE, message=FALSE}
+```{r chunk6_runDADA, echo=FALSE, message=FALSE}
 
 ```
 Insert code to make a table and remove chimeras here. 
-```{r chunk7_chimeras echo=FALSE, message=FALSE}
+```{r chunk7_chimeras, echo=FALSE, message=FALSE}
 
 ```
 Insert code to tally how many sequences made it through your pipeline. Answer question #4 after running this chunk.
-```{r chunk8_tally echo=FALSE, message=FALSE}
+```{r chunk8_tally, echo=FALSE, message=FALSE}
 
 ```
 
 Insert code to assign taxonomy here
-```{r chunk9_taxonomy echo=FALSE, message=FALSE}
+```{r chunk9_taxonomy, echo=FALSE, message=FALSE}
 
 ```
 Insert your code to create a phyloseq object and summary barplots here. Remember to make barplots at a taxonomic level OTHER THAN PHYLUM here. 
-```{r chunk10_physeq echo=FALSE, message=FALSE}
+```{r chunk10_physeq, echo=FALSE, message=FALSE}
 
 ```
 
 Insert your code to create evaluation object here. 
-```{r chunk11_evaluate echo=FALSE, message=FALSE}
+```{r chunk11_evaluate, echo=FALSE, message=FALSE}
 
 ```
 
 Insert your code to evaluate unions and intersections here
-```{r chunk12_sets echo=FALSE, message=FALSE}
+```{r chunk12_sets, echo=FALSE, message=FALSE}
 ```
 
 Insert your code to plot results vs known truths here. Answer question #5 after completing this chunk.
-```{r chunk13_evalplots echo=FALSE, message=FALSE}
+```{r chunk13_evalplots, echo=FALSE, message=FALSE}
 ```
 
