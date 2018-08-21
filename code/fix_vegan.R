@@ -1,5 +1,4 @@
 remove.packages(c("phyloseq", "vegan"))
-library(devtools)
-install_version("vegan", version = "2.4-6", repos = "http://cran.us.r-project.org")
+install_packages("vegan", type="source")
 source("https://bioconductor.org/biocLite.R")
-biocLite("phyloseq")
+biocLite("phyloseq", type="source")
