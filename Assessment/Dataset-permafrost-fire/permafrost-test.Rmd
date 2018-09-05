@@ -1,12 +1,19 @@
 ---
-title: "Perm_fire-import"
+title: "Tas_rare_phyloseq-import"
 output: html_document
 ---
 
 ```{r setup, include=FALSE}
 library(phyloseq)
 perm_fire<-load("/Users/sergiomorales/Dropbox/Micro336/Lab info/Assessment/Dataset-permafrost-fire/permafrost-fire.RData")
+Tas_rare_phyloseq
 #Example - Extracting sample_data
 md<-data.frame(sample_data(Tas_rare_phyloseq))
+
+sample_data(Tas_rare_phyloseq)$Organic_mineral <- ifelse(sample_data(Tas_rare_phyloseq)$depth %in% c("0-0.1", "0.1-0.2", "0.2-0.3") , c("Organic"), c("Mineral"))
+
+md2<-data.frame(sample_data(Tas_rare_phyloseq))
+
+
 ```
 

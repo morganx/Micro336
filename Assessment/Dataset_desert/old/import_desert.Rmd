@@ -1,0 +1,11 @@
+---
+title: "import"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+library(phyloseq)
+Data_desert<-load("/Users/sergiomorales/Dropbox/Micro336/Lab info/Assessment/Dataset_desert/Dataset_desert.RData")
+#Example - Extracting sample_data
+md<-data.frame(sample_data(Desert_rare_phyloseq))
+```
