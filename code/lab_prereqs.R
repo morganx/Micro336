@@ -1,5 +1,4 @@
-# Install prerequisites for Micro360 lab
-source("https://bioconductor.org/biocLite.R")
+source('https://bioconductor.org/biocLite.R')
 #biocLite()
 #biocLite("dada2")
 #install.packages("devtools")
