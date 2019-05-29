@@ -17,19 +17,17 @@ This week's questions and your answers:
 # Answer these two questions using your RQC output
 2. 	a. Most Illumina sequencing runs for 16S rRNA are either 150 bp x 2, 250 bp x 2, or 300 bp x 2 paired ends. What is the length of paired end reads used for this Illumina run?
 
-  b. Approximately what is the median read quality and quality range at the end of read1 in the raw data?(Just describe the general tendency of all four forward plots, and estimate).
+  b. Use the cycle-specific average quality plot to explain whether or not sequencing quality is equally good over the entire read length. Do all samples have equal quality?
 
-  c.  Approximately what is the median read quality and quality range at the end of read2 in the raw data? (Just describe the geeral tendency of all four reverse plots, and estimate )
-
-  d. What is different about the quality of read1 and read2 in the raw data?
+  c. What is different about the quality of read1 and read2 in the raw data?
     
   e.  Given that higher read quality indicates a lower sequencing error rate, does read1 or read2 in the raw data have a higher error rate?
 
 
-3.	
-  a. In the processed data (top plots), what is the median read quality at the ends (e.g. the last 30 bases) of read 1 and 2?
+3.	Use the "Per Read Mean Quality Distribution of Files" and "Read length distributions" plots to answer the following questions:
+  a. Which samples had the worst quality?
 
-  b. What did the processing step do to read quality?
+  b. What did the processing step (in which "Raw even" became "processed even" and "Raw staggered" became "Processed staggered") do to the data?
 
 # Answer this question after you have finished running dada2 and are about to import your data into phyloseq
 4. 
