@@ -1,10 +1,2 @@
-# Install micro336 lab prereqs
-source('https://bioconductor.org/biocLite.R')
-biocLite()
-biocLite("dada2")
-install.packages("devtools")
-library(devtools)
-install_version("vegan", version = "2.4-6", repos = "http://cran.us.r-project.org")
-biocLite("phyloseq")
-biocLite("Rqc")
-install.packages(c("knitr","ggplot2", "dplyr", "Rmisc", "caTools",  "kableExtra"))
+source("https://bioconductor.org/biocLite.R")
+
