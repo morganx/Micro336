@@ -60,8 +60,14 @@ Answer the following questions for this week's lab homework. Please answer Quest
 5) 
   a) Based on entire class Google Doc results, do you think a Qubit or a nanodrop is more accurate for quantifying DNA?
   b) Based on entire class Google Doc results, are some sample types particularly problematic? Why might this be?
+  
+##Here is my gel  
+```{r gel, echo=FALSE, fig.cap="MyGel", out.width = '100%'}
+setwd("~/Micro336-master/Templates/")
+knitr::include_graphics("gel.png")
+```
 
-
+##Here is my MIMARKS data
 ```{r echo=FALSE}
 # This is a piece of R code has been provided for you to insert your 
 # MIMARKS template into # your report after you fill it out. Use Excel 
@@ -85,7 +91,7 @@ template %>%
    column_spec(6, width = "5em")
 ```
 
-
+##Here is my quantified DNA
 ```{r echo=FALSE}
 # This is a piece of R code has been provided for you to insert your DNA 
 # quantification data  into your report after you fill it out. Use Excel to 
