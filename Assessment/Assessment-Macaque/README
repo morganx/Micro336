@@ -1,0 +1,9 @@
+This data is from Yasuda et al, Cell Host Microbe 2015
+
+https://www.cell.com/cell-host-microbe/pdfExtended/S1931-3128(15)00035-9
+
+To construct this phyloseq object, OTU table was downloaded from huttenhower.sph.harvard.edu/biogeography2015.
+Since this table was relative abundances, OTUs were forced to 1,000,000 read per sample and rounded.
+
+To load this phyloseq object:
+monkey<-readRDS(file = "~/Micro336-master/Assessment/Dataset-Macaque/monkey.rds")
