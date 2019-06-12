@@ -37,7 +37,7 @@ b. At which step were the most sequences lost?
 
 c. How many chimeric sequences were removed?
 
-# Answer this question after you have used phyloseq to explore your data and compare it to your known truth
+# Answer this question after you have used phyloseq to explore your data and compare it to your known truth. Justify your answers.
 5. 
 a. Did the raw and processed data agree with one another regarding the presence and abundance of taxa within the samples?
 
