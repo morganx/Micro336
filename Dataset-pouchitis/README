@@ -1,8 +1,0 @@
-To import this dataset:
-
-pouchitis<-readRDS(file = "~/Micro336-master/Assessment/Dataset-pouchitis/pouchitis.rds")
-
-This data is from the following manuscript:
-
-https://genomebiology.biomedcentral.com/articles/10.1186/s13059-015-0637-x
-
