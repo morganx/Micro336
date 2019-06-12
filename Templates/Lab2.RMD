@@ -25,7 +25,7 @@ This week's questions and your answers:
 
 
 3.	Use the "Per Read Mean Quality Distribution of Files" and "Read length distributions" plots to answer the following questions:
-  a. Which reads had the worst quality?
+  a. Which fastq files had the worst quality?
 
   b. What did the processing step (in which "Raw even" became "processed even" and "Raw staggered" became "Processed staggered") do to the data?
 
