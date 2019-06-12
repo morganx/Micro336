@@ -1,0 +1,10 @@
+This data is from the following publication:
+
+https://msystems.asm.org/content/1/3/e00018-16
+
+Phyloseq object was constructed from OTU tables available at:
+huttenhower.sph.harvard.edu/MBTA2015
+
+To load:
+
+mbta<-readRDS(file = "~/Micro336-master/Assessment/Dataset-MBTA/mbta.rds")
