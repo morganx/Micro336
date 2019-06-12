@@ -1,7 +1,8 @@
 **Prerequisites**
 
-You will need to install several pieces of software on your computer to carry out these exercises. All of the following software is available for Windows, MacOS, or Linux. If you do not have these installed already, please go to the following download links, choose the appropriate version for your computer, download, and install.
+All Micro336 exercises can be carried out in the University of Otago Student Desktop environment, which has R and R Studio preinstalled.
 
+You can also install R and R Studio on your own hardware:
 
 1) R
     
@@ -13,7 +14,8 @@ You will need to install several pieces of software on your computer to carry ou
 
     (Choose R Studio Desktop - Open Source License)
 
-Errata:
+
+Lab errata:
 
 *If Lab2 doesn't knit in R studio but all chunks work OK when run individually:
 	**knit(Lab2.RMD)
