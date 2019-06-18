@@ -103,7 +103,7 @@ library(ggplot2)
 options(knitr.table.format = "html")
 template2<-read.csv("~/Micro336-master/Templates/Lab1-DNA.csv")
 mysub<-subset(template2, template2$source %in% c("serial1", "serial2"))
-ggplot(mysub, aes(x=nanodrop.mg.ul, y=-log(dilution, 10), colour=source)) + geom_point() + ggtitle("Nanodrop serial dilutions") + ylab("Dilution factor (-log10)")
+ggplot(mysub, aes(x=nanodrop.ng.ul, y=-log(dilution, 10), colour=source)) + geom_point() + ggtitle("Nanodrop serial dilutions") + ylab("Dilution factor (-log10)")
 ggplot(mysub, aes(x=qubit.ng.ul, y=-log(dilution, 10), colour=source)) + geom_point() + ggtitle("Qubit serial dilutions") + ylab("Dilution factor (-log10)")
 
 template2 %>%
