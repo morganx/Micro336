@@ -63,9 +63,9 @@ plots at the bottom of this markdown may help you to answer this question.
   b) Based on entire class Google Doc results, are some sample types particularly problematic? Why might this be?
   
 ##Here is my gel  
-```{r gel, echo=FALSE, fig.cap="MyGel", out.width = '100%'}
-setwd("~/Micro336-master/Templates/")
-knitr::include_graphics("gel.png")
+```{r dpi=72,  echo=FALSE, fig.cap="MyGel"}
+setwd("~/Micro336-master/Templates")
+knitr::include_graphics("gel.tiff" )
 ```
 
 ##Here is my MIMARKS data
