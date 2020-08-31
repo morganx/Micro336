@@ -1,5 +1,8 @@
 To import this dataset:
 
+# Use Pouchitis-dada2.rds for dada2-processed version
+# Use pouchitis-qiime.rds for qiime-processed version
+
 pouchitis<-readRDS(file = "~/Micro336-master/Assessment/Dataset-pouchitis/pouchitis.rds")
 
 This data is from the following manuscript:
