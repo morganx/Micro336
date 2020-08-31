@@ -1,0 +1,5 @@
+To import:
+
+risk_qiime<-readRDS("~/Micro336-master/Assessment/Dataset-RISK-mixed/risk-qiime.RDS")
+
+risk_dada<-readRDS("~/Micro336-master/Assessment/Dataset-RISK-mixed/risk-dada2.rds")
