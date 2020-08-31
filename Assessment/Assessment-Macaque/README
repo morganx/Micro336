@@ -6,4 +6,4 @@ To construct this phyloseq object, OTU table was downloaded from huttenhower.sph
 Since this table was relative abundances, OTUs were forced to 1,000,000 read per sample and rounded.
 
 To load this phyloseq object:
-monkey<-readRDS(file = "~/Micro336-master/Assessment/Dataset-Macaque/monkey.rds")
+monkey<-readRDS(file = "~/Micro336-master/Assessment/Assessment-Macaque/monkey.rds")
