@@ -11,14 +11,14 @@ This is an extremely simple R Markdown example. You can use the white space to w
 
 R will execute commands that are between three backticks followed by {r}, like the code block underneath this sentence.
 
-```{r}
+```{r, chunk_alpha}
 #R will not execute this comment because it starts with #, but it will execute the code underneath
 print ("Welcome to Micro336!")
 ```
 
 The preceding three backticks indicate the end of the block of code, so I can put more comments here.
 
-```{r}
+```{r, chunk_beta}
 # This is my second chunk of R code
 print("I can't wait to learn to use R!")
 a<-1
@@ -26,97 +26,71 @@ b<-2
 print(a + b)
 ```
 
-Please insert your code that imports your DNA abundance data, assigns it to a variable, shows the contents of the variable, and generates a plot here:
+This is where we will enter our code to get a preview of some of R's powerful features.
 
-```{r}
-# Insert your code here
+Put your "chunk 3" code here. Try modifying it to plot some other relationship.
+```{r, chunk_gamma}
 
-#This code loads my data
-
-# This code shows my data
-
-# This code plots my data
 ```
 
-Questions for Assessment:
 
-Answer the following questions for this week's lab homework. Please answer Question #1 prior to Wednesday lab.
+```{r, chunk1_setup, echo=FALSE, message=FALSE, warning=FALSE}
 
-1) Do you think that water, human, or soil samples will be the most difficult to extract significant quantities of DNA from? Why?
-
-2) Fill out the MIMARKS template for the samples you've collected for this week's lab (Lab1-Mimarks.csv):
-
-
-3) Interpret your answers to the following:
-  a) Did you see bands on your gel for your positive control? 
-  b) Did you see a band on your gel for your negative control?
-  c) Did any samples fail to amplify?
-  d) Did PCR band intensity correspond to DNA quantity?
-
-
-
-4) Based on your own results, do you think a Qubit or a nanodrop is more accurate for  quantifying DNA? Consulting the serial dilution
-plots at the bottom of this markdown may help you to answer this question.
-
-5) 
-  a) Based on entire class Google Doc results, do you think a Qubit or a nanodrop is more accurate for quantifying DNA?
-  b) Based on entire class Google Doc results, are some sample types particularly problematic? Why might this be?
-  
-##Here is my gel  
-```{r dpi=72,  echo=FALSE, fig.cap="MyGel"}
-setwd("~/Micro336-master/Templates")
-knitr::include_graphics("gel.tiff" )
-```
-
-##Here is my MIMARKS data
-```{r echo=FALSE}
-# This is a piece of R code has been provided for you to insert your 
-# MIMARKS template into # your report after you fill it out. Use Excel 
-# to fill out Lab1-Mimarks.csv with your 
-# metadata, and save this file as a .csv when you are finished. Do not 
-# change this piece of code or your markdown will break.
-
-library(knitr)
-library(kableExtra)
-options(knitr.table.format = "html")
-template<-read.csv("~/Micro336-master/Templates/Lab1-Mimarks.csv")
-template %>%
-  kable() %>%
-   kable_styling(bootstrap_options = "striped", full_width = F, font_size=7) %>%
-   row_spec(0, angle = -45) %>%
-  column_spec(1, border_right = T, width="8em") %>%
-  column_spec(2, width = "6em") %>%
-   column_spec(3, width = "5em") %>%
-   column_spec(4, width = "5em") %>%
-   column_spec(5, width = "5em") %>%
-   column_spec(6, width = "5em")
-```
-
-##Here is my quantified DNA
-```{r echo=FALSE}
-# This is a piece of R code has been provided for you to insert your DNA 
-# quantification data  into your report after you fill it out. Use Excel to 
-# fill out Lab1-DNA.csv withyour DNA quantity data and save this file as a 
-# .csv when you are finished. Do not change this piece of code or your markdown 
-# will break.
+library(phyloseq)
+library(dada2)
+library(dplyr)
 library(ggplot2)
-options(knitr.table.format = "html")
-template2<-read.csv("~/Micro336-master/Templates/Lab1-DNA.csv")
-mysub<-subset(template2, template2$source %in% c("serial1", "serial2"))
-ggplot(mysub, aes(x=log(nanodrop.ng.ul), y=log(dilution), colour=source)) + geom_point() + ggtitle("Nanodrop serial dilutions") + ylab("log Dilution factor")
-ggplot(mysub, aes(x=log(qubit.ng.ul), y=log(dilution), colour=source)) + geom_point() + ggtitle("Qubit serial dilutions") + ylab("log Dilution factor")
+```
 
-template2 %>%
-  kable() %>%
-   kable_styling(bootstrap_options = "striped", full_width = F, font_size=7) %>%
-   row_spec(0, angle = -45) %>%
-  column_spec(1, border_right = T, width="8em") %>%
-  column_spec(2, width = "6em") %>%
-   column_spec(3, width = "5em") %>%
-   column_spec(4, width = "5em") %>%
-   column_spec(5, width = "5em") %>%
-     column_spec(6, width = "5em") %>%
-   column_spec(7, width = "5em")
+```{r, chunk2_fileparse, echo=TRUE, message=FALSE, warnings=FALSE}
 
 ```
 
+```{r, chunk3_dadaQC, echo=FALSE, message=FALSE}
+
+```
+
+```{r, chunk4_runDADA, echo=FALSE, message=FALSE}
+
+```
+
+```{r, chunk5_chimeras, echo=FALSE, message=FALSE}
+
+```
+
+
+```{r, chunk6_tally, echo=FALSE, message=FALSE}
+
+```
+
+```{r, chunk7_taxonomy, echo=FALSE, message=FALSE}
+
+```
+
+```{r, chunk8_physeq, echo=FALSE, message=FALSE}
+
+```
+
+```{r, chunk9_evaluate, echo=FALSE, message=FALSE}
+
+```
+
+```{r, chunk10_richness, echo=FALSE, message=FALSE}
+
+```
+
+```{r, chunk11_barplots, echo=FALSE, message=FALSE}
+
+```
+
+```{r, chunk12_intersections, echo=FALSE, message=FALSE}
+
+```
+
+```{r, chunk13_finale, echo=FALSE, message=FALSE}
+
+```
+
+```{r, chunk14_rarefy}
+
+```
