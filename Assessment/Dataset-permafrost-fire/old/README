@@ -1,6 +1,0 @@
-How to load data
-
-# Loads your data into a phyloseq object called "phylo"
-
-library(phyloseq)
- phylo<-readRDS("~/Micro336-master/Assessment/Dataset-permafrost-fire/phylo.rds")
