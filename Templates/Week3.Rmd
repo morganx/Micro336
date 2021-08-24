@@ -1,0 +1,52 @@
+---
+  title: "Micro336 Week 3"
+author: "SEM"
+date: "August 12, 2021"
+output:
+  html_document: default
+pdf_document: default
+---
+  
+  NOTE: Remember to rename your file so that it follows this format -> StudentID_Lastname_Week3
+  
+  This week's questions and your answers:
+  
+1. Provide a Stacked barplot showing mean relative abundance of phyla in Throat samples based on RUNCENTER
+```{r Q1}
+
+``` 
+
+
+2. Provide a plot showing differentialy abundant taxa between RUNCENTER by Class and Phylum for Throat samples. Indicate which Taxa are different.
+
+```{r Q2}
+
+``` 
+
+3. Discuss which plot (Q1 or 2) is better and why.
+
+
+4. What other approach could you use to identify taxa changing by RUNCENTER? 
+
+
+5. Plot differentialy abundant taxa by Genus and Phylum as determined using approach in Q4.
+
+```{r}
+
+
+```
+
+
+
+
+
+
+
+
+
+If your results won't knit use the commands below to create your final document. 
+##library(knitr)
+##knit('Week3.rmd')
+###will make an output file called file.rm
+##library(rmarkdown)
+##render("Week3.rmd","html_document")

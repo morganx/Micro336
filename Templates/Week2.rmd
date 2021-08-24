@@ -1,0 +1,61 @@
+---
+  title: "Micro336 Week 2"
+author: "SEM"
+date: "August 12, 2021"
+output:
+  html_document: default
+pdf_document: default
+---
+  
+  This week's questions and your answers:
+  
+1. How many taxa, samples, variables and taxonomic ranks are represented within the HMP data file used in lab this week? How many are represented when the data was subsetted to focus solely on samples collected from Throat samples?
+
+```{r Q1}
+
+``` 
+
+
+2. Explain what rarefication is and the purpose of it.
+
+
+3. Calculate rarefaction curves and plot using only Throat samples. Repeat again after you have rarefied. 
+
+```{r Q3}
+
+``` 
+
+4. What statistical analysis would you use to test difference in alpha diversity for continuous vs categorical data? 
+
+
+5. Are there differences between alpha diversity based on where the sequencing was performed (RUNCENTER)? Which center was different, if any? Show your boxplot and provide statistical support for your interpretation.
+
+```{r}
+
+
+```
+
+
+6.	Are there differences in beta diversity across Throat samples based on RUNCENTER? Show and interpret your NMDS plot. Assign a different color to each Run Center.  Provide statistical support for your NMDS plot (Stressplot) and your interpretations.
+
+```{r}
+
+
+```
+
+7.	Explain why you would use ANOSIM vs ADONIS?
+
+
+
+
+
+
+
+
+
+If your results won't knit use the commands below to create your final document. 
+##library(knitr)
+##knit('Week2.rmd')
+###will make an output file called file.rm
+##library(rmarkdown)
+##render("Week2.rmd","html_document")
