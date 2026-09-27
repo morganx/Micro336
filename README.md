@@ -1,8 +1,7 @@
 # Micro336
 
-This repository was created to support the laboratory portion of Micr336 (Microbial Ecology) at the University of Otago from 2017-2021. This content was created by Xochitl Morgan and Sergio Morales. The purpose of this lab was to teach basic R and data analysis skills to undergraduates. The lab manual was used to build a foundation for 16S rRNA data analysis using dada2 and phyloseq, using data from the Human Microbiome Project.  Students subsequently performed a capstone data analysis project, applying their analysis skills to a new dataset.  All analysis was performed within R Studio, within the University of Otago's Student Desktop environment. 
+This repository contains materials developed for the laboratory component of MICR336 (Microbial Ecology) at the University of Otago from 2017–2021. Xochitl Morgan and Sergio Morales created the course content to teach undergraduate students foundational R programming, data analysis, and microbial-community analysis. Students first learned to process and analyze Human Microbiome Project 16S rRNA gene data using DADA2 and phyloseq, then applied those skills in a capstone analysis of a previously unseen dataset. All coursework was completed in RStudio through the University of Otago Student Desktop environment. The repository includes the laboratory manual, R Markdown assignment templates, and datasets used for weekly exercises and capstone projects.
 
-The repository contains a lab manual, various datasets used for the analysis projects, and R markdown templates for weekly assignments.
 
 The original repository was hosted at Gitlab, and has been mirrored to GitHub. 
 
