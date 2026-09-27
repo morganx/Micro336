@@ -1,0 +1,1 @@
+The purpose of this directory was to contain code snippets needed for quickly addressing technical issues arising during teaching within our Student Desktop environment. "RQC_report.pdf" was placed here for student reference because this command was prone to random failure when running in realtime. 
