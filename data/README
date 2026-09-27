@@ -8,4 +8,9 @@ PS = processed staggered
 RE = raw even
 RS = raw staggered
 
-This directory also contains several other learning datasets. "HMPv35.RDS" contains the complete Human Microbiome Project 16S rRNA data with limited metadata, and is used for many exercises. 
+This directory also contains several other learning datasets. 
+"Trio.RDS" contains the same four fastq files, processed with qiime, mothur, and dada2 and combined into a single phyloseq object.
+
+"HMPv35.RDS" contains the complete Human Microbiome Project 16S rRNA data with limited metadata, and is used for many exercises. 
+
+"HMP_simPH.RDS" is the subset of HMPv35 that contains only the vaginal samples. Each sample has been assigned a random pH. The pH values are not accurate - this is only a teaching exercise for data analysis with a continuous covariate. 
