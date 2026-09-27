@@ -1,0 +1,1 @@
+This directory contains a rubric for student capstone assignments, and individual folders for each dataset. Students picked one dataset to analyze for their reports, and turned in an analysis report and their code. 
